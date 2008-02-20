@@ -1,0 +1,145 @@
+#! /bin/sh
+
+RCLM_PREFIX=@prefix@
+RCLM_SCRIPT_DIR=@prefix@/share/@PACKAGE@/script
+
+cat <<EOF
+RCLM2 (RoboCup League Manager 2)
+Copyright (C) 2007 Takenori KUBO, Hidehisa Akiyama, Takashi Takizawa
+
+EOF
+
+usage() {
+    cat <<EOF
+
+Usage: $0 [-c|-s] <ROUND_NAME>
+	-c: install script by copy.
+	-s: install script by sym link.
+	ROUND NAME: 
+
+EOF
+
+}
+
+how_to_start() {
+    echo
+    echo 'HOW TO START: (*) marked is optional .'
+    echo
+    echo '	$ cd '${NAME}
+    echo
+    echo '	# set league type (i.e. 2D, 3D, 3D_standalone).'
+    echo '	$ ./script/init <LEAGUE_TYPE>'
+    echo
+    echo '	# make some settings .'
+    echo '	$ ./script/init_scehduler <SCHEDULER_TYPE> (*)'
+    echo '	$ ./script/init_announce <ANNOUNCE_TYPE> (*)' 
+    echo
+    echo '	# set schedule .'
+    echo '	$ ./script/schedule/init <TEAMS> '
+    echo '	or'
+    echo '	$ vi ./var/schedule'
+    echo
+    echo '	# start games .'
+    echo '	$ ./script/start'
+    echo
+}
+
+copy() {
+    src=$1
+    script=`basename $1`
+    dist="${NAME}/script/${script}"
+    echo "	Copying $dist ."
+    cp $src $dist
+}
+
+link() {
+    src=$1
+    script=`basename $1`
+    dist="${NAME}/script/${script}"
+    echo "	Sym linking $dist ."
+    ln -s $src $dist
+}
+
+make_dir() {
+    echo " mkdir $1 ."
+    mkdir -p $1 
+}
+
+setup_rclm() {
+    echo "setup RoboCup League Manager into ${NAME} ."
+    echo
+    echo "create directories ."
+
+    if [ -e ${NAME} ]; then
+	echo "${NAME} is already exists ."
+	exit 1
+    fi
+    make_dir ${NAME}
+    make_dir ${NAME}/archives
+    make_dir ${NAME}/script
+    make_dir ${NAME}/var
+    echo "done ."
+
+    echo
+    echo "install script"
+    echo "   from ${RCLM_SCRIPT_DIR}"
+    echo "   into ${NAME}/script ."
+    echo
+    for script in ${RCLM_SCRIPT_DIR}/*
+    do
+	${INSTALL} ${script}
+    done
+    echo "done ."
+    echo
+
+    echo "make ${NAME}/var/conf ."
+    cat > ${NAME}/var/conf <<EOF
+RCLM_PREFIX=${RCLM_PREFIX}
+. ${RCLM_PREFIX}/share/rclm2/functions.bash
+EOF
+
+
+    echo 'rclm setuped at ${NAME} .'
+    how_to_start
+}
+
+# main() 
+
+if test $# -eq 0
+then
+    usage
+    exit 0
+fi
+
+INSTALL=link
+#INSTALL=copy
+
+while test $# -gt 0
+do
+    case $1 in
+	-c)
+	    INSTALL=copy
+	    ;;
+	-s)
+	    INSTALL=link
+	    ;;
+	-*)
+	    echo "unknow option $1"
+	    usage
+	    exit 1
+	    ;;
+	*)
+	    NAME=$1
+	    break
+	    ;;
+    esac
+    shift
+done
+
+if test "x${NAME}" = "x" 
+then
+    usage
+    exit 0
+fi
+
+setup_rclm

@@ -1,0 +1,123 @@
+#! /bin/bash
+
+. ./var/conf
+
+## global Variables
+WORKDIR="./"
+ARCHIVEDIR="./archives"
+RESULTPRINTER=${RCLM_PREFIX}/bin/rclmresultprinter
+#MATCH_NAME=$1
+
+### for rclmpublish
+#RCLMPUBLISH_DIR=/opt/robocup/lib/rcleaguemanager/rclmpublish
+#RCLMPUBLISH=${RCLMPUBLISH_DIR}/rclmpublish.php
+#TEMPLATE=${RCLMPUBLISH_DIR}/index.tpl
+
+## ----------------------------------------------------------
+## get team names
+#TEAM_1_DIR=`awk 'NR==1{print $1}' ${MATCH_NAME}`
+#TEAM_2_DIR=`awk 'NR==1{print $3}' ${MATCH_NAME}`
+
+# if $USESCP != 0, all log files are copied to
+# ${ARCHIVEHOST}:${GROUPNAME}.archive
+# ${GROUPNAME} is a result of `basename $PWD'
+USESCP="0"
+# ssh remote login account
+#LOGIN="robocup"
+#ARCHIVEHOST="192.168.1.254"
+
+
+## __after_match(team1, team2)
+## return 0, if failed
+T1=$1
+T2=$2
+
+    #--------------------------------------------------#
+    # rename incomplete.{rcg,rcl}
+LOGDATE=`date "+%Y%m%d%H%M"`
+LOGNAME="${LOGDATE}-incomplete"
+
+    # check if there's a nonempty incomplete recorded game
+if [ -s ${WORKDIR}/incomplete.rcg ]; then
+    GAME=`${RESULTPRINTER} ${WORKDIR}/incomplete.rcg`
+		# "<team_left> <team_right> <score_left> <score_right>"
+    if [ -n "${GAME}" ]; then
+	set ${GAME}
+	LOGNAME="${LOGDATE}-$1_$3-vs-$2_$4"
+    fi
+    _echo "renaming incomplete.rcg to ${LOGNAME}.rcg"
+    mv ${WORKDIR}/incomplete.rcg ${WORKDIR}/${LOGNAME}.rcg
+    if [ -f "${WORKDIR}/incomplete.rcl" ]; then
+	_echo "renaming incomplete.rcl to ${LOGNAME}.rcl"
+	mv ${WORKDIR}/incomplete.rcl ${WORKDIR}/${LOGNAME}.rcl
+    fi
+fi
+
+    # check if there's an unknown nonempty incomplete record log
+if [ -s ${WORKDIR}/incomplete.rcl ]; then
+    _echo "found unknown incomplete.rcl, saving a backup..."
+    mv ${WORKDIR}/incomplete.rcl ${WORKDIR}/${LOGNAME}.rcl
+fi
+
+    # remove empty incomplete logs
+[ -f "${WORKDIR}/incomplete.rcg" ] && rm -f ${WORKDIR}/incomplete.rcg
+[ -f "${WORKDIR}/incomplete.rcl" ] && rm -f ${WORKDIR}/incomplete.rcl
+
+    #return 0
+
+    #--------------------------------------------------
+    # add new result to the $RESULTFILE
+RESULTFILE="${WORKDIR}/results"
+
+ls ${WORKDIR}/*.rcg* 2> /dev/null > ${WORKDIR}/rcglist
+
+if [ -s ${WORKDIR}/rcglist ]; then
+    for rcgfile in `cat ${WORKDIR}/rcglist`;	do
+	GAME=`${RESULTPRINTER} ${rcgfile}`
+	if [ -n "${GAME}" ]; then
+	    RCGDATE=`echo ${rcgfile} | tr '[\-./_a-zA-Z]' ' ' | awk '{ print $1 }'`
+	    RESULT="$RCGDATE $GAME"
+	    echo "save result $RESULT"
+	    echo $RESULT >> ${RESULTFILE}
+	fi
+    done
+fi
+
+rm -f ${WORKDIR}/rcglist
+[ -f ${RESULTFILE} ] || echo "result file ${RESULTFILE} does not exist"
+
+    #--------------------------------------------------
+		# archive game logs
+
+    # if archive directry does not exist, create it.
+[ -d ${ARCHIVEDIR} ] || mkdir --mode=755 --parents ${ARCHIVEDIR}
+
+    # create swf files
+echo "--------- Create flash files ----------"
+ROBOCUP2FLASH=`which robocup2flash 2> /dev/null`
+if [ $? -eq 0 ] ; then
+  $ROBOCUP2FLASH ${WORKDIR}/*.rcg
+else
+  echo "robocup2flash not found."
+fi
+    # compress log files
+echo "--------- Compress Logs ----------"
+gzip -v ${WORKDIR}/*.{rcg,rcl,log}
+
+    # copy to archiving host machine
+if [ ${USESCP} -ne "0" ]; then
+    echo "--------- Archive Logs to Other Host ----------"
+    GROUPNAME=`basename $PWD`
+    HOSTDIR="${GROUPNAME}.archives"
+    ssh -l ${LOGIN} -f ${ARCHIVEHOST} "mkdir --mode=755 --parents ${HOSTDIR}"
+    scp -v ${WORKDIR}/*.gz ${LOGIN}@${ARCHIVEHOST}:${HOSTDIR}
+    scp ${RESULTFILE} ${LOGIN}@${ARCHIVEHOST}:${HOSTDIR}
+fi
+
+    # move to archive directory
+echo "--------- Archive Logs ----------"
+mv -v ${WORKDIR}/*.swf ${ARCHIVEDIR}
+mv -v ${WORKDIR}/*.gz ${ARCHIVEDIR}
+
+    # create index.html
+#${RCLMPUBLISH} ${TEMPLATE} results > index.html

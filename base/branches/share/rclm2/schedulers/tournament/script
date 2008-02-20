@@ -1,0 +1,16 @@
+#! /usr/bin/ruby
+
+### Configuration
+require "/usr/local/bin/tournament.rb"
+#require "tournament.rb"
+@homeDir = "/home/ssil/2d/"
+###
+
+from_stdin
+
+# Script
+#set_team("<TEAM_NAME>","<TEAM_DIR>")
+#game("G1", "team1", "team2")
+#game("G2", "team3", "team4") 
+#game("G3", winner("G1"), winner("G2")) 
+
