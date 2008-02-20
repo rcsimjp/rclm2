@@ -1,0 +1,32 @@
+#! /bin/bash
+
+## global Variables
+WORKDIR="./"
+ARCHIVEDIR="./archives"
+#RESULTPRINTER=/opt/robocup/bin/rclmresultprinter
+#MATCH_NAME=$1
+
+## echo message and exit 1.
+## _die(message, ...)
+function _die {
+    echo "Error: $*"
+    echo
+    exit 1
+}
+
+## ----------------------------------------------------------
+## get team names
+TEAM_1_DIR=$1
+TEAM_2_DIR=$2
+
+## before_match(team1, team2)
+echo "Next Match ${TEAM_1_DIR} vs ${TEAM_2_DIR}"
+
+# check the length of team directory string
+[ -z "${TEAM_1_DIR}" ] && _die "TEAM_1_DIR is empty!"
+[ -z "${TEAM_2_DIR}" ] && _die "TEAM_2_DIR is empty!"
+
+# check start script
+[ -x ${TEAM_1_DIR}/start ] || _die "start script does not exist in ${TEAM_1_DIR} !"
+[ -x ${TEAM_2_DIR}/start ] || _die "start script does not exist in ${TEAM_2_DIR} !"
+

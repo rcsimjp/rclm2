@@ -1,0 +1,6 @@
+#!/bin/bash
+
+TOUNAMENT_SCHEDULE=./script/schedule/script
+RESULT=./results
+
+${TOUNAMENT_SCHEDULE} < ${RESULT} > ./var/schedule

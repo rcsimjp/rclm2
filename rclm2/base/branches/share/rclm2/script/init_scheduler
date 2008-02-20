@@ -1,0 +1,32 @@
+#! /bin/bash
+
+. ./var/conf
+
+list_schedulers() {
+    list_items_in_dir ${RCLM_PREFIX}/share/rclm2/schedulers
+    if [ -d ${HOME}/.rclm2/schedulers ]; then
+	list_items_in_dir ${HOME}/.rclm2/schedulers
+    fi
+}
+
+if [ $# -ne 1 ]; then
+    cat <<EOF
+Usege: $0 <SCHEDULER>
+
+ <SCHEDULER> List.
+EOF
+    list_schedulers
+else
+    echo $1
+    src=""
+    if [ -x ${RCLM_PREFIX}/share/rclm2/schedulers/$1/init ]; then
+	src=${RCLM_PREFIX}/share/rclm2/schedulers/$1
+    elif [ -x ${HOME}/.rclm2/schedulers/$1 ]; then
+	src=${HOME}/.rclm2/schedulers/$1
+    else
+	echo 'unknown SCHEDULER "'$1'" .'
+	exit 1
+    fi
+    test -e ./script/schedule && rm -rf ./script/schedule
+    ln -s $src ./script/schedule
+fi

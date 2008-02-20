@@ -1,0 +1,133 @@
+#! /bin/bash
+
+## global Variables
+WORKDIR="./"
+#ARCHIVEDIR="./archives"
+#RESULTPRINTER=/opt/robocup/bin/rclmresultprinter
+
+## ----------------------------------------------------------
+## get team names
+TEAM_1_DIR=$1
+TEAM_2_DIR=$2
+
+## ----------------------------------------------------------
+## network configration
+
+MACHINES_L="localhost localhost localhost"
+MACHINES_R="localhost localhost localhost"
+SERVERHOST=localhost
+ACCOUNT=ssil
+
+## ----------------------------------------------------------
+## rcssserver command line options
+
+SERVOPT=""
+SERVOPT="${SERVOPT} server::nr_normal_halfs = 2"
+SERVOPT="${SERVOPT} server::nr_extra_halfs = 0"
+SERVOPT="${SERVOPT} server::penalty_shoot_outs = 0"
+SERVOPT="${SERVOPT} server::auto_mode = 1"
+SERVOPT="${SERVOPT} server::half_time = 300"
+SERVOPT="${SERVOPT} server::game_logging = 1"
+SERVOPT="${SERVOPT} server::text_logging = 1"
+SERVOPT="${SERVOPT} server::game_log_dated = 1"
+SERVOPT="${SERVOPT} server::text_log_dated = 1"
+SERVOPT="${SERVOPT} server::game_log_fixed = 0"
+SERVOPT="${SERVOPT} server::text_log_fixed = 0"
+SERVOPT="${SERVOPT} server::game_log_dir = ${WORKDIR}"
+SERVOPT="${SERVOPT} server::text_log_dir = ${WORKDIR}"
+SERVOPT="${SERVOPT} server::game_log_compression = 0"
+SERVOPT="${SERVOPT} server::text_log_compression = 0"
+SERVOPT="${SERVOPT} server::kick_off_wait = 200"
+
+[ -e ${HOME}/.rclm2D ] && .  ${HOME}/.rclm2D 
+
+
+## ----------------------------------------------------------
+## rcssmonitor command line options
+
+MONOPT=""
+# !!! Do NOT edit next line !!!
+MONOPT="${MONOPT} -auto_quit_mode 1 -auto_quit_wait 15"
+## score board font, see /usr/X11R6/lib/X11/fonts/misc/
+MONOPT="${MONOPT} -font_name 12x24"
+MONOPT="${MONOPT} -window_size_x 1280 -window_size_y 932"
+
+## Wait few seconds with echo message.
+## _countdown(second=10, message="")
+function _countdown {
+    local count=$1
+    local message=$2
+
+    count=${count:=10}
+    while [ $count != 0 ]; do
+	count=$(($count - 1))
+	printf "rclm2: %3d %s\r" $count "$message"
+	sleep 1
+    done
+    echo
+}
+
+## echo message and exit 1.
+## _die(message, ...)
+function _die {
+    echo "Error: $*"
+    echo
+    exit 1
+}
+
+# -----------------------------------------------------------
+# set team directory & team side
+
+if [ $((`date "+%s"` % 2)) == 1 ]; then
+    TEAM_L_DIR=$TEAM_1_DIR
+    TEAM_R_DIR=$TEAM_2_DIR
+else
+    TEAM_L_DIR=$TEAM_2_DIR
+    TEAM_R_DIR=$TEAM_1_DIR
+fi
+TEAM_L=`basename $TEAM_L_DIR`
+TEAM_R=`basename $TEAM_R_DIR`
+
+# -----------------------------------------------------------
+# ready for match
+
+START_L="/tmp/start_l.$$"
+echo "${TEAM_L_DIR}/start ${TEAM_L_DIR} ${MACHINES_L} ${SERVERHOST} ${ACCOUNT}" > ${START_L}
+chmod +x ${START_L}
+TEAM_L_START="server::team_l_start = \"${START_L}\""
+
+START_R="/tmp/start_r.$$"
+echo "${TEAM_R_DIR}/start ${TEAM_R_DIR} ${MACHINES_R} ${SERVERHOST} ${ACCOUNT}" > ${START_R}
+chmod +x ${START_R}
+TEAM_R_START="server::team_r_start = \"${START_R}\""
+
+echo "start Match \"${TEAM_L}\" vs \"${TEAM_R}\"..."
+#--------------------------------------------------
+# log file settings
+
+LOGDATE=`date "+%Y%m%d%H%M"`
+LOGNAME="${LOGDATE}-${TEAM_L}-vs-${TEAM_R}.log"
+
+#--------------------------------------------------------------
+# Starting rcssserver & rcssmonitor
+rcssserver $SERVOPT $TEAM_L_START $TEAM_R_START \
+    1> ${WORKDIR}/${LOGNAME} 2>&1 &
+
+PID=$!
+sleep 2
+# start monitor with auto quit mode
+rcssmonitor $MONOPT 1> /dev/null 2>&1
+
+#echo $PID
+# wait server end
+_countdown 5 "Waiting for server end."
+
+rm ${START_R}
+rm ${START_L}
+
+kill -s INT $PID
+
+#[ $? -ne 0 ] && _die "... failed."
+#echo "rclm: ...done."
+#_run_match ${TEAM_1_DIR} ${TEAM_2_DIR}
+

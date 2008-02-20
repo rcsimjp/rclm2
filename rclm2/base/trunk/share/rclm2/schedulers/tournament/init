@@ -1,0 +1,8 @@
+#! /bin/bash
+echo $0
+. ./var/conf
+
+TOURNAMENT_CONF=./script/schedule/script
+
+touch results
+${TOURNAMENT_CONF} < ./results > ./var/schedule

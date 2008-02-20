@@ -1,0 +1,26 @@
+#! /bin/bash
+
+SCHEDULE=./var/schedule
+RCLM_ARGS=`awk 'NR==1{print $0}' ${SCHEDULE}`
+source ./var/conf
+PID=$$
+
+while [ "x${RCLM_ARGS}" != "x" ]; do
+    #echo ${RCLM_ARGS}
+    TEAM_1=`awk 'NR==1{print $1}' ${SCHEDULE}`
+    TEAM_2=`awk 'NR==1{print $3}' ${SCHEDULE}`
+
+    #./script/game/clearup
+    ./script/game/setup   ${TEAM_1} ${TEAM_2} $PID
+    ./script/game/start   ${TEAM_1} ${TEAM_2}
+    ./script/game/record  
+    
+    echo ${RCLM_ARGS} >> ./var/completed
+    #awk 'NR>1{print $0}' ./var/schedule > ./var/schedule.tmp
+    #mv ./var/schedule.tmp ./var/schedule
+    ./script/schedule/update
+    RCLM_ARGS=`awk 'NR==1{print $0}' ./var/schedule`
+done
+
+echo
+echo "league finished."
