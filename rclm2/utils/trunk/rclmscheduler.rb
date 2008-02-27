@@ -4,16 +4,19 @@ class TeamNameLoader
   def initialize
     @teams = []
   end
-  
+
   def from_stdin
     while ( team = STDIN.gets )
       team = team.chomp.tr_s(" \t", '_')
+      if ( team.empty? )
+        next
+      end
       @teams << team
       #   }
     end
     @teams = @teams.uniq
   end
-  
+
   def print
     @teams.each { | team |
       puts team
@@ -25,7 +28,7 @@ class TeamNameLoader
   end
 end
 
-class Scheduler 
+class Scheduler
   def initialize( total_teams )
     create( total_teams )
   end
@@ -90,7 +93,7 @@ end
 loader = TeamNameLoader.new
 
 loader.from_stdin
-  
+
 if ( loader.getTeams.empty? )
   usage
   puts "Team list is empty!"
