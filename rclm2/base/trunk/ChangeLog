@@ -1,0 +1,28 @@
+2008-02-27  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* m4:
+	* m4/ax_boost_base.m4:
+	* rcg/Makefile.am:
+	* rcg/factory.cpp:
+	* rcg/factory.h:
+	* rcg/gzfstream.cpp:
+	* rcg/gzfstream.h:
+	* rcg/handler.h:
+	* rcg/parser.h:
+	* rcg/parser_v1.cpp:
+	* rcg/parser_v1.h:
+	* rcg/parser_v2.cpp:
+	* rcg/parser_v2.h:
+	* rcg/parser_v3.cpp:
+	* rcg/parser_v3.h:
+	* rcg/resultprinter.cpp:
+	* rcg/types.h:
+	* rcg/util.cpp:
+	* rcg/util.h:
+	* README:
+	* AUTHORS:
+	* Makefile.am:
+	* bootstrap:
+	* configure.ac:
+	- added C++ version resultprinter.
+	- updated README file.

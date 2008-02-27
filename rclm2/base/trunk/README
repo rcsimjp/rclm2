@@ -1,0 +1,116 @@
+
+  * Install
+  * Usage
+  * Format of team list file
+  * Format of schedule file
+  * Example: SSIL settings
+
+* Install
+
+  $ tar xzvf rclm2-x.x.x.tar.gz
+  $ cd rclm2-x.x.x
+  $ ./configure [--prefix=<RCLMDIR>]
+  $ make
+  [ $ su ]
+  $ make install
+
+The main command 'rclm2' is installed into 'RCLMDIR/bin'. Several sub
+script files are also installed into 'RCLMDIR/share/rclm2'
+
+
+* Usage
+
+  + Create round directory
+
+   The sub script files are copied (or sym-linked) in ROUND directory
+   (The default setting is 'sym-link').
+
+     $ rclm2 [ -c | -s ] <ROUND>
+
+  + Change directory to the ROUND
+
+     $ cd <ROUND>
+
+  + Set league type
+
+     $ ./script/init { SSIL2D | competition | robocup2007_2D  }
+
+  + (Optional) Set scheduler type
+
+  If you do not set the scheduler type, the roundrobin scheduler is
+  used by default.
+
+     $ ./script/init_scheduler [ roundrobin | tournament ]
+
+  + Create schedule file
+
+  TEAMS is the team listed file, and './var/schedule' is the match
+  listed file. The detailed format  is described in the following
+  sections.
+
+     $ ./script/schedule/init <TEAMS>
+     (or, directly create/edit './var/schedule'.)
+
+  + Start games
+
+  It is strongly recommended to check the schedule file before you
+  start the round.
+
+     $ cat ./var/schedule
+     $ ./script/start
+
+
+* Format of team list file
+
+Each line contains only one team.
+PATH_TO_TEAM? is the team directory where their start or kill
+scripts exist. This value is usually the home directory of each team.
+'''NOTE''': PATH_TO_TEAM? must not contain the white space.
+
+ <PATH_TO_TEAM1>
+ <PATH_TO_TEAM2>
+ <PATH_TO_TEAM3>
+ ...
+
+Example:
+ /home/wright2d
+ /home/ath
+ /home/oxsy
+ /home/brasil2d
+
+
+* Format of schedule file
+
+Each line contains only one match.
+PATH_TO_TEAM? must be same as the string value listed in the team list
+file.
+ <PATH_TO_TEAM1> vs <PATH_TO_TEAM2> [<START_TIME>]
+ <PATH_TO_TEAM2> vs <PATH_TO_TEAM3> [<START_TIME>]
+ ...
+
+START_TIME is an optional value, that indicates the time when that
+game will be started.
+START_TIME is not automatically generated. So, you need to write
+them by yourself.
+
+
+Example:
+ /home/wright2d vs /home/ath 11:30
+ /home/ath vs /home/oxsy 11:45
+ /home/oxsy vs /home/brasil2d 12:00
+ /home/wright2d vs /home/brasil2d 12:15
+ /home/wright2d vs /home/oxsy 12:30
+ /home/ath vs /home/brasil2d 12:45
+
+
+* Example: SSIL settings
+
+At first, you must prepare the team listed file, called 'teams.all'.
+
+    $ rclm2 SSIL
+    $ cd SSIL
+    $ ./script/init SSIL2D
+    $ ./script/schedule/init teams.all
+    $ cat ./var/schedule
+    $ ./script/start
+
