@@ -16,7 +16,7 @@ usage() {
 Usage: $0 [-c|-s] <ROUND_NAME>
 	-c: install script by copy.
 	-s: install script by sym link.
-	ROUND NAME: 
+	ROUND NAME:
 
 EOF
 
@@ -28,12 +28,12 @@ how_to_start() {
     echo
     echo '	$ cd '${NAME}
     echo
-    echo '	# set league type (i.e. 2D, 3D, 3D_standalone).'
+    echo '	# set league type (i.e. SSIL2D, 3D, 3D_standalone).'
     echo '	$ ./script/init <LEAGUE_TYPE>'
     echo
     echo '	# make some settings .'
     echo '	$ ./script/init_scehduler <SCHEDULER_TYPE> (*)'
-    echo '	$ ./script/init_announce <ANNOUNCE_TYPE> (*)' 
+#    echo '	$ ./script/init_announce <ANNOUNCE_TYPE> (*)'
     echo
     echo '	# set schedule .'
     echo '	$ ./script/schedule/init <TEAMS> '
@@ -47,7 +47,7 @@ how_to_start() {
 
 make_dir() {
     echo " mkdir $1 ."
-    mkdir -p $1 
+    mkdir -p $1
 }
 
 setup_rclm() {
@@ -91,7 +91,7 @@ EOF
     how_to_start
 }
 
-# main() 
+# main()
 
 if test $# -eq 0
 then
@@ -124,7 +124,7 @@ do
     shift
 done
 
-if test "x${NAME}" = "x" 
+if test "x${NAME}" = "x"
 then
     usage
     exit 0
