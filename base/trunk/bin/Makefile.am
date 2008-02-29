@@ -1,1 +1,1 @@
-bin_SCRIPTS=rclm2
+bin_SCRIPTS = rclm2 rclmscheduler
