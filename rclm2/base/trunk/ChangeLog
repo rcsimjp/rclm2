@@ -1,3 +1,12 @@
+2008-02-29  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* bin/rclmscheduler:
+	* AUTHORS:
+	* bin/Makefile.am:
+	* bin/Makefile.in:
+	* share/rclm2/schedulers/roundrobin/init:
+	- added rclmscheduler as an installed target.
+
 2008-02-28  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* bin/rclm2.in (Usage):

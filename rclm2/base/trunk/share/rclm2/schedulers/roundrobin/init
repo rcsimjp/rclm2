@@ -6,4 +6,3 @@ RCLMSCHEDULER=${RCLM_PREFIX}/bin/rclmscheduler
 TEAMLIST=$1
 
 ${RCLMSCHEDULER} < ${TEAMLIST} > ./var/schedule
-
