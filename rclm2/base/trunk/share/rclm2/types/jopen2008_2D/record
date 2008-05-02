@@ -3,7 +3,7 @@
 . ./var/conf
 
 ## global Variables
-WORKDIR="./"
+WORKDIR="."
 ARCHIVEDIR="./archives"
 RESULTPRINTER=${RCLM_PREFIX}/bin/rclmresultprinter
 #MATCH_NAME=$1
@@ -112,3 +112,9 @@ mv -v ${WORKDIR}/*.gz ${ARCHIVEDIR}
 
     # create index.html
 #${RCLMPUBLISH} ${TEMPLATE} results > index.html
+
+
+echo ""
+echo "Press [Enter] to finish this match,"
+echo -n "or press [Ctrl-C] to stop the league..."
+read
