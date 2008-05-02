@@ -37,7 +37,6 @@
 
 #include "handler.h"
 #include "types.h"
-
 #include <iostream>
 
 namespace rcsc {
@@ -62,7 +61,10 @@ ParserV1::parse( std::istream & is,
     // register log version
     // Because rcg v1 does not contain version information,
     // REC_OLD_VERSION is set without reading.
-    handler.handleLogVersion( REC_OLD_VERSION );
+    if ( ! handler.handleLogVersion( REC_OLD_VERSION ) )
+    {
+        return false;
+    }
 
     dispinfo_t info;
     while ( is.good() )

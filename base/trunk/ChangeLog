@@ -1,3 +1,42 @@
+2008-05-02  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* bin/rclm2.in:
+	- fixed a problem of bash.
+
+	* INSTALL:
+	* Makefile.in:
+	* aclocal.m4:
+	* configure:
+	* install-sh:
+	* missing:
+	* share/rclm2/Makefile.am:
+	* share/rclm2/Makefile.in:
+	* share/rclm2/functions.bash:
+	* share/rclm2/types/jopen2008_2D:
+	* share/rclm2/types/jopen2008_2D/clearup:
+	* share/rclm2/types/jopen2008_2D/record:
+	* share/rclm2/types/jopen2008_2D/setup:
+	* share/rclm2/types/jopen2008_2D/start:
+	* share/rclm2/types/jopen2008_2D/stop:
+	* bin/Makefile.in:
+	- added new type jopen2008_2D
+
+	* rcg/Makefile.am:
+	* rcg/factory.cpp:
+	* rcg/handler.h:
+	* rcg/parser.h:
+	* rcg/parser_v1.cpp:
+	* rcg/parser_v2.cpp:
+	* rcg/parser_v2.h:
+	* rcg/parser_v3.cpp:
+	* rcg/parser_v4.cpp:
+	* rcg/parser_v4.h:
+	* rcg/resultprinter.cpp:
+	* rcg/types.h:
+	* rcg/util.cpp:
+	* rcg/util.h:
+	- updated log parser. supported v4 format log.
+
 2008-02-29  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* bin/rclmscheduler:

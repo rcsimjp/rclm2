@@ -177,6 +177,79 @@ public:
     virtual
     bool handleEOF() = 0;
 
+
+    //
+    // version 4
+    //
+
+    /*!
+      \brief (pure virtual) handle the start of show info v4
+      \param time game time of handled show info
+      \param show read data
+      \return handled result
+     */
+    virtual
+    bool handleShow( const int time,
+                     const ShowInfoT & show ) = 0;
+
+    /*!
+      \brief (pure virtual) handle msg info
+      \param time game time of handled msg info
+      \param board message board type
+      \param msg read data
+      \return handled result
+     */
+    virtual
+    bool handleMsg( const int time,
+                    const int board,
+                    const std::string & msg ) = 0;
+
+    /*!
+      \brief handle playmode
+      \param time game time of handled playmode info
+      \param pm playmode id
+      \return handled result
+     */
+    virtual
+    bool handlePlayMode( const int time,
+                         const PlayMode pm ) = 0;
+
+    /*!
+      \brief handle team info
+      \param time game time of handled team info
+      \param team_l left team info
+      \param team_r right team info
+      \return handled result
+    */
+    virtual
+    bool handleTeam( const int time,
+                     const TeamT & team_l,
+                     const TeamT & team_r ) = 0;
+
+    /*!
+      \brief handle server_param message
+      \param msg raw message string
+      \return handled result
+    */
+    virtual
+    bool handleServerParam( const std::string & msg ) = 0;
+
+    /*!
+      \brief handle player_param message
+      \param msg raw message string
+      \return handled result
+    */
+    virtual
+    bool handlePlayerParam( const std::string & msg ) = 0;
+
+    /*!
+      \brief handle player_type message
+      \param msg raw message string
+      \return handled result
+    */
+    virtual
+    bool handlePlayerType( const std::string & msg ) = 0;
+
 };
 
 

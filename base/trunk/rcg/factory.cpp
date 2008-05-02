@@ -38,6 +38,7 @@
 #include "parser_v1.h"
 #include "parser_v2.h"
 #include "parser_v3.h"
+#include "parser_v4.h"
 
 #include "types.h"
 
@@ -62,10 +63,6 @@ make_parser( std::istream & is )
         return p;
     }
 
-    //std::cerr << "rcg header ["
-    //          << header[0] << header[1] << header[2] << (int)header[3]
-    //          << "]"
-    //          << std::endl;
     if ( header[0] == 'U'
          && header[1] == 'L'
          && header[2] == 'G' )
@@ -73,19 +70,21 @@ make_parser( std::istream & is )
         version = static_cast< int >( header[3] );
     }
 
-    switch ( version ) {
-    case REC_OLD_VERSION:
+    if ( version == REC_OLD_VERSION )
+    {
         p = ParserPtr( new ParserV1 );
-        break;
-    case REC_VERSION_2:
+    }
+    else if ( version == REC_VERSION_2 )
+    {
         p = ParserPtr( new ParserV2 );
-        break;
-    case REC_VERSION_3:
+    }
+    else if ( version == REC_VERSION_3 )
+    {
         p = ParserPtr( new ParserV3 );
-        break;
-    default:
-        // null pointer
-        break;
+    }
+    else if ( version == static_cast< int >( '0' ) + REC_VERSION_4 )
+    {
+        p = ParserPtr( new ParserV4 );
     }
 
     return p;

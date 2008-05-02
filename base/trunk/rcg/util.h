@@ -84,12 +84,30 @@ nstohd( const Int16 val );
 
 /*-------------------------------------------------------------------*/
 /*!
+  \brief convert network byte order short value to floating point number
+  \param val network byte order variable
+  \return floating point number filtered by SHOWINFO_SCALE.
+*/
+float
+nstohf( const Int16 val );
+
+/*-------------------------------------------------------------------*/
+/*!
   \brief convert local floating point value to thnetwork byte order short value
   \param val local floating point value
   \return network byte order short value
 */
 Int16
 hdtons( const double & val );
+
+/*-------------------------------------------------------------------*/
+/*!
+  \brief convert local floating point value to thnetwork byte order short value
+  \param val local floating point value
+  \return network byte order short value
+*/
+Int16
+hftons( const float & val );
 
 /*-------------------------------------------------------------------*/
 /*!
@@ -103,6 +121,16 @@ nltohd( const Int32 & val );
 
 /*-------------------------------------------------------------------*/
 /*!
+  \brief convert network byte order long value to floating point number
+  for rcsmonitor v2 protocol
+  \param val network byte order variable
+  \return floating point number filtered by SHOWINFO_SCALE2.
+*/
+float
+nltohf( const Int32 & val );
+
+/*-------------------------------------------------------------------*/
+/*!
   \brief convert a floating point number to the network byte order long value
   for rcsmonitor v2 protocol
   \param val local floating point number value
@@ -110,6 +138,16 @@ nltohd( const Int32 & val );
 */
 Int32
 hdtonl( const double & val );
+
+/*-------------------------------------------------------------------*/
+/*!
+  \brief convert a floating point number to the network byte order long value
+  for rcsmonitor v2 protocol
+  \param val local floating point number value
+  \return network byte order value.
+*/
+Int32
+hftonl( const float & val );
 
 /*-------------------------------------------------------------------*/
 /*!

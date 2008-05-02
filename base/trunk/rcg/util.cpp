@@ -30,16 +30,19 @@
 /////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
 #endif
 
 #include "types.h"
 
 #include <cmath>
-
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
 
 namespace rcsc {
 namespace rcg {
@@ -99,10 +102,31 @@ nstohd( const Int16 val )
 /*!
 
 */
+float
+nstohf( const Int16 val )
+{
+    return ( static_cast< float >( static_cast< Int16 >( ntohs( val ) ) )
+             / SHOWINFO_SCALEF );
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
 Int16
 hdtons( const double & val )
 {
     return htons( static_cast< Int16 >( rint( val * SHOWINFO_SCALE ) ) );
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+Int16
+hftons( const float & val )
+{
+    return htons( static_cast< Int16 >( rintf( val * SHOWINFO_SCALEF ) ) );
 }
 
 /*-------------------------------------------------------------------*/
@@ -120,6 +144,17 @@ nltohd( const Int32 & val )
 /*!
 
 */
+float
+nltohf( const Int32 & val )
+{
+    return ( static_cast< float >( static_cast< Int32 >( ntohl( val ) ) )
+             / SHOWINFO_SCALE2F );
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
 Int32
 hdtonl( const double & val )
 {
@@ -131,10 +166,21 @@ hdtonl( const double & val )
 
 */
 Int32
+hftonl( const float & val )
+{
+    return htonl( static_cast< Int32 >( rintf( val * SHOWINFO_SCALE2F ) ) );
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+Int32
 nstonl( const Int16 val )
 {
-    return ( static_cast< Int32 >
-             ( htonl( static_cast< Int32 >( nstohd( val ) * SHOWINFO_SCALE2 ) ) ) );
+    return hdtonl( nstohd( val ) );
+    //return ( static_cast< Int32 >
+    //         ( htonl( static_cast< Int32 >( nstohd( val ) * SHOWINFO_SCALE2 ) ) ) );
 }
 
 /*-------------------------------------------------------------------*/
@@ -144,8 +190,9 @@ nstonl( const Int16 val )
 Int16
 nltons( const Int32 & val )
 {
-    return ( static_cast< Int16 >
-             ( htons( static_cast< Int16 >( nltohd( val ) * SHOWINFO_SCALE ) ) ) );
+    return hdtons( nltohd( val ) );
+    //return ( static_cast< Int16 >
+    //         ( htons( static_cast< Int16 >( nltohd( val ) * SHOWINFO_SCALE ) ) ) );
 }
 
 } // end namespace

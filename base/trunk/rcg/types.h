@@ -32,77 +32,28 @@
 #ifndef RCSC_RCG_TYPES_H
 #define RCSC_RCG_TYPES_H
 
+#include "types.h"
+
 #include <boost/cstdint.hpp>
 
-namespace rcsc {
+#include <string>
 
+namespace rcsc {
+namespace rcg {
 
 //! max player number in one team
 const int MAX_PLAYER = 11;
 
-//! uniform number that represents the unknown player
-const int Unum_Unknown = -1;
-
 /*!
   \enum SideID
   \brief side type definition
-*/
+ */
 enum SideID {
     LEFT = 1,
     NEUTRAL = 0,
     RIGHT = -1,
 };
 
-/*!
-  \enum MarkerID
-  \brief marker type defintiion
- */
-enum MarkerID {
-    Goal_L, Goal_R, // 1
-
-    Flag_C,
-    Flag_CT, Flag_CB,
-    Flag_LT, Flag_LB,
-    Flag_RT,  Flag_RB, // 8
-
-    Flag_PLT, Flag_PLC, Flag_PLB,
-    Flag_PRT, Flag_PRC, Flag_PRB, // 14
-
-    Flag_GLT, Flag_GLB,
-    Flag_GRT, Flag_GRB, // 18
-
-    Flag_TL50, Flag_TL40, Flag_TL30, Flag_TL20, Flag_TL10, // 23
-    Flag_T0,
-    Flag_TR10, Flag_TR20, Flag_TR30, Flag_TR40, Flag_TR50, // 29
-
-    Flag_BL50, Flag_BL40, Flag_BL30, Flag_BL20, Flag_BL10,
-    Flag_B0,
-    Flag_BR10, Flag_BR20, Flag_BR30, Flag_BR40, Flag_BR50, // 40
-
-    Flag_LT30, Flag_LT20, Flag_LT10 , // 43
-    Flag_L0,
-    Flag_LB10, Flag_LB20, Flag_LB30, // 47
-
-    Flag_RT30, Flag_RT20, Flag_RT10, // 50
-    Flag_R0,
-    Flag_RB10, Flag_RB20, Flag_RB30, // 54
-
-    Marker_Unknown = 55
-};
-
-/*!
-  \enum LineID
-  \brief line type definition
- */
-enum LineID {
-    Line_Left, Line_Right, Line_Top, Line_Bottom,
-    Line_Unknown
-};
-
-//! Id of the unknown player type
-const int Hetero_Unknown = -1;
-//! Id of the default player type
-const int Hetero_Default = 0;
 
 /*!
   \enum PlayMode
@@ -221,46 +172,14 @@ enum PlayMode {
       "" \
 }
 
-// available characters in player's say or coach's freeform message
-// [-0-9a-zA-Z ().+*/?<>_]
-// 74 characters
-
-//! character set that player can say.
-#define SAY_CHARACTERS \
-"0123456789"\
-"abcdefghijklmnopqrstuvwxyz"\
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ"\
-" ().+*/?<>_-"
-
-
-/*!
-  \enum BallStatus
-  \brief ball position status for coach/trainer
- */
-enum BallStatus {
-    Ball_Null,
-    Ball_InField,
-    Ball_GoalL,
-    Ball_GoalR,
-    Ball_OutOfField,
-    Ball_MAX
-} ;
-
-//! ball status string table for trainer.
-#define BALL_STATUS_STRINGS { "",\
-    "in_field",\
-    "goal_l",\
-    "goal_r",\
-    "out_of_field",\
-}
-
-
-namespace rcg {
-
-//! type of the short value
+//! type of the 16bits integer value
 typedef boost::int16_t Int16;
-//! type of the long value
+//! type of the unsigned 16bits integer value
+typedef boost::uint16_t UInt16;
+//! type of the 32bits integer value
 typedef boost::int32_t Int32;
+//! type of the unsigned 32bits integer value
+typedef boost::int32_t UInt32;
 
 /*!
   \brief max length of color name string.
@@ -300,23 +219,24 @@ enum MsgInfoMode {
   \brief player status bit mask.
  */
 enum PlayerStatus {
-    DISABLE         = 0x0000,
-    STAND           = 0x0001,
-    KICK            = 0x0002,
-    KICK_FAULT      = 0x0004,
-    GOALIE          = 0x0008,
-    CATCH           = 0x0010,
-    CATCH_FAULT     = 0x0020,
-    BALL_TO_PLAYER  = 0x0040,
-    PLAYER_TO_BALL  = 0x0080,
-    DISCARD         = 0x0100,
-    LOST            = 0x0200,
-    BALL_COLLIDE    = 0x0400,
-    PLAYER_COLLIDE  = 0x0800,
-    TACKLE          = 0x1000,
-    TACKLE_FAULT    = 0x2000,
-    BACK_PASS       = 0x4000,
-    FREE_KICK_FAULT = 0x8000
+    DISABLE         = 0x00000000,
+    STAND           = 0x00000001,
+    KICK            = 0x00000002,
+    KICK_FAULT      = 0x00000004,
+    GOALIE          = 0x00000008,
+    CATCH           = 0x00000010,
+    CATCH_FAULT     = 0x00000020,
+    BALL_TO_PLAYER  = 0x00000040,
+    PLAYER_TO_BALL  = 0x00000080,
+    DISCARD         = 0x00000100,
+    LOST            = 0x00000200,
+    BALL_COLLIDE    = 0x00000400,
+    PLAYER_COLLIDE  = 0x00000800,
+    TACKLE          = 0x00001000,
+    TACKLE_FAULT    = 0x00002000,
+    BACK_PASS       = 0x00004000,
+    FREE_KICK_FAULT = 0x00008000,
+    POST_COLLIDE    = 0x00010000, // player collided with goal posts
 };
 
 
@@ -325,6 +245,7 @@ enum PlayerStatus {
 // game log format versin 1 & version 2
 
 const double SHOWINFO_SCALE = 16.0; //!< scaling parameter
+const float SHOWINFO_SCALEF = 16.0f;
 const int REC_OLD_VERSION = 1; //!< version number of rcg v1
 const int REC_VERSION_2 = 2; //!< recorded value of rcg v2
 
@@ -435,6 +356,8 @@ struct dispinfo_t {
 
 //! scaling variable
 const double SHOWINFO_SCALE2 = 65536.0;
+//! scaling variable
+const float SHOWINFO_SCALE2F = 65536.0f;
 //! version number
 const int REC_VERSION_3 = 3;
 
@@ -640,13 +563,14 @@ struct server_params_t {
     Int32 ka_length; //!< keep away region length
     Int32 ka_width;  //!< keep away region width
 
-    Int32 ball_stuck_area; //!< spare variable
+    Int32 ball_stuck_area; //!< automatic drop ball threshold while play_on
 
-    Int32 sparelong6; //!< spare variable
-    Int32 sparelong7; //!< spare variable
-    Int32 sparelong8; //!< spare variable
-    Int32 sparelong9; //!< spare variable
-    Int32 sparelong10; //!< spare variable
+    Int32 max_tackle_power; //!< allowed maximum tackle power
+    Int32 max_back_tackle_power; //!< allowed minimum tackle power
+
+    Int32 tackle_dist; //!< forward tackle area length
+    Int32 tackle_back_dist; //!< back tackle area length
+    Int32 tackle_width; //!< tackle area width
 
     Int16 start_goal_l; //!< initial left team score
     Int16 start_goal_r; //!< initial right team score
@@ -709,7 +633,8 @@ struct player_params_t {
     Int32 sparelong9; //!< spare variable
     Int32 sparelong10; //!< spare variable
 
-    Int16 spareshort1; //!< spare variable
+    Int16 allow_mult_default_type; //!< whether multiple default type is allowed
+
     Int16 spareshort2; //!< spare variable
     Int16 spareshort3; //!< spare variable
     Int16 spareshort4; //!< spare variable
@@ -738,8 +663,399 @@ struct dispinfo_t2 {
     } body; //!< union variable
 };
 
+//
+// Data structures for the text based monitor protocl
+//
+
+/*!
+  \struct BallT
+  \brief generic ball data for display information
+ */
+struct BallT {
+    float x_; //!< ball position x
+    float y_; //!< ball position y
+    float vx_; //!< ball velocity x
+    float vy_; //!< ball velocity y
+
+    /*!
+      \brief initialize all variables by 0
+     */
+    BallT()
+        : x_( 0.0 )
+        , y_( 0.0 )
+        , vx_( SHOWINFO_SCALE2F )
+        , vy_( SHOWINFO_SCALE2F )
+      { }
+
+    /*!
+      \brief check if this object has velocity info
+      \return true if this object has velocity info
+     */
+    bool hasVelocity() const
+      {
+          return vx_ != SHOWINFO_SCALE2F
+              && vy_ != SHOWINFO_SCALE2F;
+      }
+};
+
+/*!
+  \struct PlayerT
+  \brief generic player data for display information
+ */
+struct PlayerT {
+    char side_; //!< player's side. 'l', 'r' or 'n'
+    Int16 unum_; //!< player's uniform number. 0 means disabled player.
+    Int16 type_; //!< heterogeneous player type id
+
+    char view_quality_; //!< view quality indicator, 'l' or 'h'
+
+    char focus_side_; //!< focus target side. 'l', 'r' or 'n'. 'n' means no focus target.
+    Int16 focus_unum_; //!< focus target uniform number. 0 means no focus target.
+
+    Int32 state_; //!< state bit flags
+
+    float x_; //!< position x
+    float y_; //!< position y
+    float vx_; //!< velocity x
+    float vy_; //!< velocity y
+    float body_; //!< body direction (degree)
+    float neck_; //!< head direction relative to body (degree)
+    float point_x_; //!< arm pointing x
+    float point_y_; //!< arm pointing y
+
+    float view_width_; //!< view width (degree). high: value>0, low: value<0
+
+    float stamina_; //!< satamina value
+    float effort_; //!< effort value
+    float recovery_; //!< recovery value
+
+    UInt16 kick_count_; //!< kick command count
+    UInt16 dash_count_; //!< dash command count
+    UInt16 turn_count_; //!< turn command count
+    UInt16 catch_count_; //!< catch command count
+    UInt16 move_count_; //!< move command count
+    UInt16 turn_neck_count_; //!< turn_neck command count
+    UInt16 change_view_count_; //!< change_view command count
+    UInt16 say_count_; //!< say command count
+    UInt16 tackle_count_; //!< tackle command count
+    UInt16 pointto_count_; //!< pointto command count
+    UInt16 attentionto_count_; //!< attentionto command count
+
+    /*!
+      \brief initialize all variables
+     */
+    PlayerT()
+        : side_( 'n' )
+        , unum_( 0 )
+        , type_( -1 )
+        , view_quality_( 'h' )
+        , focus_side_( 'n' )
+        , focus_unum_( 0 )
+        , state_( 0 )
+        , x_( 0.0f )
+        , y_( 0.0f )
+        , vx_( SHOWINFO_SCALE2F )
+        , vy_( SHOWINFO_SCALE2F )
+        , body_( 0.0f )
+        , neck_( SHOWINFO_SCALE2F )
+        , point_x_( SHOWINFO_SCALE2F )
+        , point_y_( SHOWINFO_SCALE2F )
+        , view_width_( 0.0f )
+        , stamina_( SHOWINFO_SCALE2F )
+        , effort_( SHOWINFO_SCALE2F )
+        , recovery_( SHOWINFO_SCALE2F )
+        , kick_count_( 0 )
+        , dash_count_( 0 )
+        , turn_count_( 0 )
+        , catch_count_( 0 )
+        , move_count_( 0 )
+        , turn_neck_count_( 0 )
+        , change_view_count_( 0 )
+        , say_count_( 0 )
+        , tackle_count_( 0 )
+        , pointto_count_( 0 )
+        , attentionto_count_( 0 )
+      { }
+
+    /*!
+      \brief get side id
+      \return side id
+     */
+    SideID side() const
+      {
+          return ( side_ == 'l' ? LEFT
+                   : side_ == 'r' ? RIGHT
+                   : NEUTRAL );
+      }
+
+    /*!
+      \brief check if view quality is high.
+      \return true if view quality is high.
+     */
+    bool highQuality() const
+      {
+          return ( view_quality_ == 'h' );
+      }
+
+    /*!
+      \brief get focused player's side id
+      \return side id
+     */
+    SideID focusSide() const
+      {
+          return ( side_ == 'l' ? LEFT
+                   : side_ == 'r' ? RIGHT
+                   : NEUTRAL );
+      }
+
+    /*!
+      \brief check if this object has velocity info
+      \return true if this object has velocity info
+     */
+    bool hasVelocity() const
+      {
+          return vx_ != SHOWINFO_SCALE2F
+              && vy_ != SHOWINFO_SCALE2F;
+      }
+
+    /*!
+      \brief check if this object has neck info
+      \return true if this object has neck info
+     */
+    bool hasNeck() const
+      {
+          return neck_ != SHOWINFO_SCALE2F;
+      }
+
+    /*!
+      \brief check if this object has view width info
+      \return true if this object has view width info
+     */
+    bool hasView() const
+      {
+          return view_width_ != SHOWINFO_SCALE2F;
+      }
+
+    /*!
+      \brief check if this object has stamina info
+      \return true if this object has stamina info
+     */
+    bool hasStamina() const
+      {
+          return stamina_ != SHOWINFO_SCALE2F;
+      }
+
+    /*!
+      \brief check if this object is enabled.
+      \return true if this object is enabled.
+     */
+    bool isAlive() const
+      {
+          return state_ != 0;
+      }
+
+    /*!
+      \brief check if this object is kicking.
+      \return true if this object is kicking.
+     */
+    bool isKicking() const
+      {
+          return state_ & KICK;
+      }
+
+    /*!
+      \brief check if this object is kicking fault.
+      \return true if this object is kicking fault.
+     */
+    bool isKickingFault() const
+      {
+          return state_ & KICK_FAULT;
+      }
+
+    /*!
+      \brief check if this object is goalie.
+      \return true if this object is goalie.
+     */
+    bool isGoalie() const
+      {
+          return state_ & GOALIE;
+      }
+
+    /*!
+      \brief check if this object is catching.
+      \return true if this object is catching.
+     */
+    bool isCatching() const
+      {
+          return state_ & CATCH;
+      }
+
+    /*!
+      \brief check if this object is catching fault.
+      \return true if this object is catching fault.
+     */
+    bool isCatchingFault() const
+      {
+          return state_ & CATCH_FAULT;
+      }
+
+    /*!
+      \brief check if this object is tackling
+      \return true if this object is tackling
+     */
+    bool isTackling() const
+      {
+          return state_ & TACKLE;
+      }
+
+    /*!
+      \brief check if this object is tackling fault.
+      \return true if this object is tackling fault.
+     */
+    bool isTacklingFault() const
+      {
+          return state_ & TACKLE_FAULT;
+      }
+
+    /*!
+      \brief check if this object is pointing to somewhere.
+      \return true if this object is pointing to somewhere.
+     */
+    bool isPointing() const
+      {
+          return point_x_ != SHOWINFO_SCALE2F
+              && point_y_ != SHOWINFO_SCALE2F;
+      }
+
+    /*!
+      \brief check if this object is focusing to someone.
+      \return true if this object is focusing to someone.
+     */
+    bool isFocusing() const
+      {
+          return side_ != 'n';
+      }
+
+    /*!
+      \brief check if this object is collided with ball.
+      \return true if this object is collided with ball.
+     */
+    bool isCollidedBall() const
+      {
+          return state_ & BALL_COLLIDE;
+      }
+
+    /*!
+      \brief check if this object is collided with player.
+      \return true if this object is collided with player.
+     */
+    bool isCollidedPlayer() const
+      {
+          return state_ & PLAYER_COLLIDE;
+      }
+
+};
+
+/*!
+  \struct TeamT
+  \brief team information
+ */
+struct TeamT {
+    std::string name_; //!< team name string
+    UInt16 score_; //!< total scores in normal game
+    UInt16 pen_score_; //!< count of penalty score
+    UInt16 pen_miss_; //!< count of penalty miss
+
+    /*!
+      \brief initialize all variables by 0
+     */
+    TeamT()
+        : score_( 0 )
+        , pen_score_( 0 )
+        , pen_miss_( 0 )
+      { }
+
+    /*!
+      \brief initialize all variables by specified values
+      \param name team name
+      \param score total score
+      \param pen_score count of penalty score
+      \param pen_miss count of penalty miss
+     */
+    TeamT( const char * name,
+           const UInt16 score,
+           const UInt16 pen_score,
+           const UInt16 pen_miss )
+        : name_( name )
+        , score_( score )
+        , pen_score_( pen_score )
+        , pen_miss_( pen_miss )
+      { }
+
+    /*!
+      \brief clear all variables
+     */
+    void clear()
+      {
+          name_.erase();
+          score_ = 0;
+          pen_score_ = 0;
+          pen_miss_ = 0;
+      }
+
+    /*!
+      \brief get the total penalty trial count
+      \return the total penalty trial count
+     */
+    int penaltyTrial() const
+      {
+          return pen_score_ + pen_miss_;
+      }
+
+    /*!
+      \brief check if artument variable has same values.
+      \param other compared variable.
+      \return compared result.
+     */
+    bool equals( const TeamT & other ) const
+      {
+          return ( name_ == other.name_
+                   && score_ == other.score_
+                   && pen_score_ == other.pen_score_
+                   && pen_miss_ == other.pen_miss_ );
+      }
+
+};
+
+/*!
+  \struct ShowInfoT
+  \brief show information
+ */
+struct ShowInfoT {
+    UInt32 time_;
+    //    PlayMode pmode_;
+    //    TeamT team_[2];
+    BallT ball_;
+    PlayerT player_[MAX_PLAYER * 2];
+};
+
+
+/*!
+  \struct DispInfoT
+  \brief display information
+ */
+struct DispInfoT {
+    PlayMode pmode_;
+    TeamT team_[2];
+    ShowInfoT show_;
+};
+
+
+//! recorded value of rcg v4
+const int REC_VERSION_4 = 4;
+
 //! default rcg version
-const int DEFAULT_LOG_VERSION = REC_VERSION_3;
+const int DEFAULT_LOG_VERSION = REC_VERSION_4;
 
 } // end namespace
 } // end namespace

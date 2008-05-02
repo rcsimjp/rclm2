@@ -84,6 +84,8 @@ public:
                 Handler & handler ) const = 0;
 };
 
+
+//! typedef of the rcg parser pointer.
 typedef boost::shared_ptr< Parser > ParserPtr;
 
 } // end of namespace
