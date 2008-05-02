@@ -21,7 +21,7 @@ TEAM_1_NAME=$1
 TEAM_2_NAME=$2
 
 ## before_match(team1, team2)
-echo ""
+echo "=================================================="
 echo "Next Match ${TEAM_1_NAME} vs ${TEAM_2_NAME}"
 
 if [ $# -eq 4 ] ; then

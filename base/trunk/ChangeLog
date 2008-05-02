@@ -1,3 +1,9 @@
+2008-05-03  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* share/rclm2/types/jopen2008_2D/record:
+	* share/rclm2/types/jopen2008_2D/setup:
+	- added the referee checking operation after game record.
+
 2008-05-02  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* bin/rclm2.in:
