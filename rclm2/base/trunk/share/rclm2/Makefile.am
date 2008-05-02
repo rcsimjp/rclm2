@@ -46,6 +46,15 @@ rclmtype_robocup2007_2D_SCRIPTS= \
 	types/robocup2007_2D/start \
 	types/robocup2007_2D/stop
 
+# rclm2 jopen2008_2D type scripts
+rclmtype_jopen2008_2Ddir=$(pkgdatadir)/types/jopen2008_2D
+rclmtype_jopen2008_2D_SCRIPTS= \
+	types/jopen2008_2D/clearup \
+	types/jopen2008_2D/record \
+	types/jopen2008_2D/setup \
+	types/jopen2008_2D/start \
+	types/jopen2008_2D/stop
+
 
 # rclm2 roundrobin scheduler scripts
 rclmschedulers_roundrobindir=$(pkgdatadir)/schedulers/roundrobin
@@ -86,6 +95,11 @@ EXTRA_DIST = \
 	types/robocup2007_2D/setup \
 	types/robocup2007_2D/start \
 	types/robocup2007_2D/stop \
+	types/jopen2008_2D/clearup \
+	types/jopen2008_2D/record \
+	types/jopen2008_2D/setup \
+	types/jopen2008_2D/start \
+	types/jopen2008_2D/stop \
 	schedulers/roundrobin/init \
 	schedulers/roundrobin/update \
 	schedulers/tournament/init \

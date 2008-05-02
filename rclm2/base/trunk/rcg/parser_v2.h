@@ -79,6 +79,16 @@ private:
     */
     bool parseData( std::istream & is,
                     Handler & handler ) const;
+
+    /*!
+      \brief parse MSG_MODE info(msg_info_t)
+      \param is reference to the input stream
+      \param handler reference to the data handler object
+      \retval true if successfully parsed.
+      \retval false if failed to parse.
+    */
+    bool parseMsgInfo( std::istream & is,
+                       Handler & handler ) const;
 };
 
 } // end of namespace

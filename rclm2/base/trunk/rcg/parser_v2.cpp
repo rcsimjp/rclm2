@@ -33,16 +33,19 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
+#endif
+
 #include "parser_v2.h"
 
 #include "handler.h"
 #include "types.h"
 
 #include <iostream>
-
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
 
 namespace rcsc {
 namespace rcg {
@@ -67,8 +70,11 @@ ParserV2::parse( std::istream & is,
     char header[4];
     is.read( header, 4 ); // read 'U', 'L', 'G', <version>
 
-    // register log version
-    handler.handleLogVersion( REC_VERSION_2 );
+    if ( static_cast< int >( header[3] ) != REC_VERSION_2
+         || ! handler.handleLogVersion( REC_VERSION_2 ) )
+    {
+        return false;
+    }
 
     // main loop
     while ( is.good() )
@@ -98,7 +104,7 @@ ParserV2::parseData( std::istream & is,
 {
     // chedk data mode.
     dispinfo_t info;
-    is.read( reinterpret_cast< char* >( &info.mode ), sizeof( short ) );
+    is.read( reinterpret_cast< char * >( &info.mode ), sizeof( Int16 ) );
 
     if ( ! is.good() )
     {
@@ -122,13 +128,7 @@ ParserV2::parseData( std::istream & is,
         }
         break;
     case MSG_MODE:
-        is.read( reinterpret_cast< char* >( &info.body.msg ),
-                 sizeof( msginfo_t ) );
-        if ( is.gcount() == sizeof( msginfo_t ) )
-        {
-            return handler.handleShowInfo( info.body.show );
-        }
-
+        return parseMsgInfo( is, handler );
         break;
     case DRAW_MODE:
         is.read( reinterpret_cast< char* >( &info.body.draw ),
@@ -146,6 +146,47 @@ ParserV2::parseData( std::istream & is,
     }
 
     return false;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool
+ParserV2::parseMsgInfo( std::istream & is,
+                        Handler & handler ) const
+{
+    bool result = false;
+
+    Int16 board;
+    is.read( reinterpret_cast< char* >( &board ), sizeof( Int16 ) );
+    if ( is.gcount() != sizeof( Int16 ) )
+    {
+        return false;
+    }
+
+    Int16 len;
+    is.read( reinterpret_cast< char* >( &len ), sizeof( Int16 ) );
+    if ( is.gcount() != sizeof( Int16 ) )
+    {
+        return false;
+    }
+    len = ntohs( len );
+
+    char * msg = new char[len];
+    is.read( msg, len );
+    if ( is.gcount() == len )
+    {
+        if ( msg[len - 1] == 0 )
+        {
+            len = std::strlen( msg );
+        }
+
+        result = handler.handleMsgInfo( board, std::string( msg, len ) );
+    }
+
+    delete [] msg;
+    return result;
 }
 
 } // end of namespace

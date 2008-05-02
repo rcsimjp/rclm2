@@ -2,7 +2,7 @@
 
 /*!
   \file resultprinter.cpp
-  \brief game result printer from rcg file
+  \brief game result printer program source File.
 */
 
 /*
@@ -30,22 +30,26 @@
 /////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
 #endif
 
-#include "gzfstream.h"
-#include "factory.h"
-#include "handler.h"
 #include "util.h"
+#include "gzfstream.h"
+#include "parser.h"
+#include "handler.h"
+#include "factory.h"
 
-#include <cmath>
-#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
+#include <cstring>
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
 #endif
 
 struct Point {
@@ -57,7 +61,6 @@ struct Point {
       { }
 };
 
-
 class ResultPrinter
     : public rcsc::rcg::Handler {
 private:
@@ -65,12 +68,14 @@ private:
     static const double PITCH_LENGTH;
     static const double PITCH_WIDTH;
 
-    static const double GOAL_WIDTH;
     static const double GOAL_POST_RADIUS;
 
-    static const double BALL_SIZE;
+    double M_goal_width;
+    double M_ball_size;
+    int M_half_time;
 
-    rcsc::PlayMode M_playmode;
+    rcsc::rcg::PlayMode M_playmode;
+    int M_cycle;
 
     std::string M_left_team_name; //!< left teamname string
     std::string M_right_team_name; //!< right teamname string
@@ -84,53 +89,51 @@ private:
     int M_left_penalty_score; //!< left team penalty kick score
     int M_right_penalty_score; //!< left team penalty kick score
 
-    rcsc::SideID M_last_penalty_taker_side;
+    rcsc::rcg::SideID M_last_penalty_taker_side;
 
 public:
 
     ResultPrinter();
 
-    virtual
+    // v3 or older
     bool handleDispInfo( const rcsc::rcg::dispinfo_t & disp );
-
-    virtual
     bool handleShowInfo( const rcsc::rcg::showinfo_t & show );
-
-    virtual
     bool handleShortShowInfo2( const rcsc::rcg::short_showinfo_t2 & show );
-
-    virtual
-    bool handleMsgInfo( short, const std::string & )
+    bool handleMsgInfo( rcsc::rcg::Int16,
+                        const std::string & )
       {
           return true;
       }
-
-    virtual
     bool handlePlayMode( char playmode );
-
-    virtual
     bool handlePlayerType( const rcsc::rcg::player_type_t & )
       {
           return true;
       }
-    virtual
-    bool handleServerParam( const rcsc::rcg::server_params_t & )
-      {
-          return true;
-      }
-    virtual
+    bool handleServerParam( const rcsc::rcg::server_params_t & param );
     bool handlePlayerParam( const rcsc::rcg::player_params_t & )
       {
           return true;
       }
-
-    virtual
     bool handleTeamInfo( const rcsc::rcg::team_t & team_left,
                          const rcsc::rcg::team_t & team_right );
 
-    //! handle the end of file
-    virtual
+    // common
     bool handleEOF();
+
+    // v4 or later
+    bool handleShow( const int time,
+                     const rcsc::rcg::ShowInfoT & show );
+    bool handleMsg( const int time,
+                    const int board,
+                    const std::string & msg );
+    bool handlePlayMode( const int time,
+                         const rcsc::rcg::PlayMode pm );
+    bool handleTeam( const int time,
+                     const rcsc::rcg::TeamT & team_l,
+                     const rcsc::rcg::TeamT & team_r );
+    bool handleServerParam( const std::string & msg );
+    bool handlePlayerParam( const std::string & msg );
+    bool handlePlayerType( const std::string & msg );
 
 private:
 
@@ -144,17 +147,18 @@ private:
 const double ResultPrinter::PITCH_LENGTH = 105.0;
 const double ResultPrinter::PITCH_WIDTH = 68.0;
 
-const double ResultPrinter::GOAL_WIDTH = 14.02;
 const double ResultPrinter::GOAL_POST_RADIUS = 0.06;
-
-const double ResultPrinter::BALL_SIZE = 0.085;
 
 /*-------------------------------------------------------------------*/
 /*!
-  constructor
+
 */
 ResultPrinter::ResultPrinter()
-    : M_playmode( rcsc::PM_Null )
+    : M_goal_width( 14.02 )
+    , M_ball_size( 0.085 )
+    , M_half_time( 3000 )
+    , M_playmode( rcsc::rcg::PM_Null )
+    , M_cycle( 0 )
     , M_left_team_name( "" )
     , M_right_team_name( "" )
     , M_left_score( 0 )
@@ -163,7 +167,7 @@ ResultPrinter::ResultPrinter()
     , M_right_penalty_taken( 0 )
     , M_left_penalty_score( 0 )
     , M_right_penalty_score( 0 )
-    , M_last_penalty_taker_side( rcsc::NEUTRAL )
+    , M_last_penalty_taker_side( rcsc::rcg::NEUTRAL )
 {
 
 }
@@ -175,7 +179,11 @@ ResultPrinter::ResultPrinter()
 bool
 ResultPrinter::handleDispInfo( const rcsc::rcg::dispinfo_t & disp )
 {
-    return handleShowInfo( disp.body.show );
+    if ( rcsc::rcg::SHOW_MODE == htons( disp.mode ) )
+    {
+        return handleShowInfo( disp.body.show );
+    }
+    return true;
 }
 
 /*-------------------------------------------------------------------*/
@@ -192,7 +200,7 @@ ResultPrinter::crossGoalLine( const Point & ball_pos,
     double gradient = delta_y / delta_x;
     double offset = prev_ball_pos.y - gradient * prev_ball_pos.x;
 
-    double x = PITCH_LENGTH*0.5 + BALL_SIZE;
+    double x = PITCH_LENGTH*0.5 + M_ball_size;
     if ( ball_pos.x < 0.0 ) x *= -1.0;
     double y_intercept = gradient * x + offset;
 
@@ -211,7 +219,7 @@ ResultPrinter::crossGoalLine( const Point & ball_pos,
     //     std::cout << ": x = " << x << std::endl;
     //     std::cout << ": y_inter = " << y_intercept << std::endl;
 
-    return ( std::fabs( y_intercept ) <= ( GOAL_WIDTH*0.5 + GOAL_POST_RADIUS ) );
+    return ( std::fabs( y_intercept ) <= ( M_goal_width*0.5 + GOAL_POST_RADIUS ) );
 }
 
 /*-------------------------------------------------------------------*/
@@ -223,10 +231,10 @@ ResultPrinter::checkFinalPenaltyGoal( const Point & ball_pos )
 {
     static Point s_prev_ball_pos;
 
-    if ( M_playmode == rcsc::PM_TimeOver
+    if ( M_playmode == rcsc::rcg::PM_TimeOver
          && crossGoalLine( ball_pos, s_prev_ball_pos ) )
     {
-        if ( M_last_penalty_taker_side == rcsc::LEFT )
+        if ( M_last_penalty_taker_side == rcsc::rcg::LEFT )
         {
             //std::cerr << "time_over -> penalty_score_l" << std::endl;
             ++M_left_penalty_score;
@@ -248,7 +256,12 @@ ResultPrinter::checkFinalPenaltyGoal( const Point & ball_pos )
 bool
 ResultPrinter::handleShowInfo( const rcsc::rcg::showinfo_t & show )
 {
-    if ( M_last_penalty_taker_side != rcsc::NEUTRAL )
+    M_cycle = rcsc::rcg::nstohi( show.time );
+
+    handlePlayMode( show.pmode );
+    handleTeamInfo( show.team[0], show.team[1] );
+
+    if ( M_last_penalty_taker_side != rcsc::rcg::NEUTRAL )
     {
         Point ball_pos;
 
@@ -268,7 +281,9 @@ ResultPrinter::handleShowInfo( const rcsc::rcg::showinfo_t & show )
 bool
 ResultPrinter::handleShortShowInfo2( const rcsc::rcg::short_showinfo_t2 & show )
 {
-    if ( M_last_penalty_taker_side != rcsc::NEUTRAL )
+    M_cycle = rcsc::rcg::nstohi( show.time );
+
+    if ( M_last_penalty_taker_side != rcsc::rcg::NEUTRAL )
     {
         Point ball_pos;
 
@@ -288,28 +303,35 @@ ResultPrinter::handleShortShowInfo2( const rcsc::rcg::short_showinfo_t2 & show )
 bool
 ResultPrinter::handlePlayMode( char playmode )
 {
-    M_playmode = static_cast< rcsc::PlayMode >( playmode );
+    rcsc::rcg::PlayMode pm = static_cast< rcsc::rcg::PlayMode >( playmode );
+
+    if ( M_playmode == pm )
+    {
+        return true;
+    }
+
+    M_playmode = pm;
 
     switch ( M_playmode ) {
-    case rcsc::PM_PenaltySetup_Left:
+    case rcsc::rcg::PM_PenaltySetup_Left:
         ++M_left_penalty_taken;
-        M_last_penalty_taker_side = rcsc::LEFT;
+        M_last_penalty_taker_side = rcsc::rcg::LEFT;
         break;
-    case rcsc::PM_PenaltySetup_Right:
+    case rcsc::rcg::PM_PenaltySetup_Right:
         ++M_right_penalty_taken;
-        M_last_penalty_taker_side = rcsc::RIGHT;
+        M_last_penalty_taker_side = rcsc::rcg::RIGHT;
         break;
-    case rcsc::PM_PenaltyMiss_Left:
+    case rcsc::rcg::PM_PenaltyMiss_Left:
         break;
-    case rcsc::PM_PenaltyMiss_Right:
+    case rcsc::rcg::PM_PenaltyMiss_Right:
         break;
-    case rcsc::PM_PenaltyScore_Left:
+    case rcsc::rcg::PM_PenaltyScore_Left:
         ++M_left_penalty_score;
         break;
-    case rcsc::PM_PenaltyScore_Right:
+    case rcsc::rcg::PM_PenaltyScore_Right:
         ++M_right_penalty_score;
         break;
-    case rcsc::PM_TimeOver:
+    case rcsc::rcg::PM_TimeOver:
         break;
     default:
         break;
@@ -320,7 +342,21 @@ ResultPrinter::handlePlayMode( char playmode )
 
 /*-------------------------------------------------------------------*/
 /*!
-  read team name & score.
+
+*/
+bool
+ResultPrinter::handleServerParam( const rcsc::rcg::server_params_t & param )
+{
+    M_goal_width = rcsc::rcg::nltohd( param.goal_width );
+    M_ball_size = rcsc::rcg::nltohd( param.ball_size );
+    M_half_time = rcsc::rcg::nstohi( param.half_time );
+
+    return true;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
 */
 bool
 ResultPrinter::handleTeamInfo( const rcsc::rcg::team_t & team_left,
@@ -355,13 +391,18 @@ ResultPrinter::handleTeamInfo( const rcsc::rcg::team_t & team_left,
 bool
 ResultPrinter::handleEOF()
 {
+    bool incomplete = false;
+
     if ( M_left_team_name.empty() )
     {
         M_left_team_name = "null";
+        incomplete = true;
     }
+
     if ( M_right_team_name.empty() )
     {
         M_right_team_name = "null";
+        incomplete = true;
     }
 
     std::cout << M_left_team_name << " " << M_right_team_name << " "
@@ -374,18 +415,126 @@ ResultPrinter::handleEOF()
                   << " " << M_right_penalty_score;
     }
 
+    if ( ! incomplete
+         && M_playmode != rcsc::rcg::PM_TimeOver )
+    {
+        if ( M_cycle % M_half_time == 0 // just a half time
+             || ( M_cycle + 1 ) % M_half_time == 0
+             && ( ( M_cycle / M_half_time ) % 2 == 0 // even number halves
+                  || ( ( M_cycle + 1 ) / M_half_time ) % 2 == 0 )
+             && M_left_score == M_right_score ) // draw game
+        {
+
+        }
+        else
+        {
+            incomplete = true;
+        }
+    }
+
+    if ( incomplete )
+    {
+        std::cout << " (incomplete match : cycle="
+                  << M_cycle << ")";
+    }
+
     std::cout << std::endl;
 
     return true;
 }
 
 
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool
+ResultPrinter::handleShow( const int time,
+                           const rcsc::rcg::ShowInfoT & show )
+{
+    return true;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool ResultPrinter::handleMsg( const int time,
+                               const int board,
+                               const std::string & msg )
+{
+    return true;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool ResultPrinter::handlePlayMode( const int time,
+                                    const rcsc::rcg::PlayMode pm )
+{
+    M_playmode = pm;
+
+    return true;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool ResultPrinter::handleTeam( const int time,
+                                const rcsc::rcg::TeamT & team_l,
+                                const rcsc::rcg::TeamT & team_r )
+{
+    M_left_team_name = team_l.name_;
+    M_left_score = team_l.score_;
+    M_left_penalty_taken = team_l.pen_score_ + team_l.pen_miss_;
+    M_left_penalty_score = team_l.pen_score_;
+
+    M_right_team_name = team_r.name_;
+    M_right_score = team_r.score_;
+    M_right_penalty_taken = team_r.pen_score_ + team_r.pen_miss_;
+    M_right_penalty_score = team_r.pen_score_;
+
+    return true;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool
+ResultPrinter::handleServerParam( const std::string & msg )
+{
+    return true;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool
+ResultPrinter::handlePlayerParam( const std::string & msg )
+{
+    return true;
+}
+
+/*-------------------------------------------------------------------*/
+/*!
+
+*/
+bool
+ResultPrinter::handlePlayerType( const std::string & msg )
+{
+    return true;
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 void
-usage()
+usage( const char * prog )
 {
-    std::cerr << "Usage: rclmresultprinter <RcgFile>[.gz]"
+    std::cerr << "Usage: " << prog << " <RcgFile>[.gz]"
               << std::endl;
 }
 
@@ -397,7 +546,7 @@ main( int argc, char** argv )
 {
     if ( argc < 2 )
     {
-        usage();
+        usage( argv[0] );
         return 1;
     }
 
@@ -409,7 +558,6 @@ main( int argc, char** argv )
         }
 
         rcsc::gzifstream fin( argv[i] );
-        //std::ifstream fin( argv[i] );
 
         if ( ! fin.is_open() )
         {

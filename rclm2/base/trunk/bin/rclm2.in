@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 RCLM_PREFIX=@prefix@
 RCLM_SCRIPT_DIR=@prefix@/share/@PACKAGE@/script

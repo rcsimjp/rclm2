@@ -1,0 +1,32 @@
+#! /bin/bash
+
+## global Variables
+WORKDIR="./"
+ARCHIVEDIR="./archives"
+#RESULTPRINTER=/opt/robocup/bin/rclmresultprinter
+#MATCH_NAME=$1
+PID=$3
+
+## echo message and exit 1.
+## _die(message, ...)
+function _die {
+    echo "Error: $*"
+    kill -s INT $PID
+    exit 1
+}
+
+## ----------------------------------------------------------
+## get team names
+TEAM_1_NAME=$1
+TEAM_2_NAME=$2
+
+## before_match(team1, team2)
+echo ""
+echo "Next Match ${TEAM_1_NAME} vs ${TEAM_2_NAME}"
+
+if [ $# -eq 4 ] ; then
+  wait_time.rb $4
+else
+  echo -n "Press [Enter] to start next match..."
+  read
+fi

@@ -30,7 +30,14 @@
 /////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include <config.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_WINDOWS_H
+#include <windows.h>
 #endif
 
 #include "parser_v3.h"
@@ -39,10 +46,6 @@
 #include "types.h"
 
 #include <iostream>
-
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
 
 namespace rcsc {
 namespace rcg {
@@ -67,8 +70,11 @@ ParserV3::parse( std::istream & is,
     char header[4];
     is.read( header, 4 ); // read 'U', 'L', 'G', <version>
 
-    // register log version
-    handler.handleLogVersion( REC_VERSION_3 );
+    if ( static_cast< int >( header[3] ) != REC_VERSION_3
+         || ! handler.handleLogVersion( REC_VERSION_3 ) )
+    {
+        return false;
+    }
 
     while ( is.good() )
     {
@@ -97,9 +103,8 @@ ParserV3::parseData( std::istream & is,
                      Handler & handler ) const
 {
     // chedk data mode.
-    short mode;
-    is.read( reinterpret_cast< char* >( &mode ),
-             sizeof( short ) );
+    Int16 mode;
+    is.read( reinterpret_cast< char* >( &mode ), sizeof( Int16 ) );
 
     if ( ! is.good() )
     {
@@ -171,16 +176,16 @@ ParserV3::parseMsgInfo( std::istream & is,
 {
     bool result = false;
 
-    short board;
-    is.read( reinterpret_cast< char* >( &board ), sizeof( short ) );
-    if ( is.gcount() != sizeof( short ) )
+    Int16 board;
+    is.read( reinterpret_cast< char* >( &board ), sizeof( Int16 ) );
+    if ( is.gcount() != sizeof( Int16 ) )
     {
         return false;
     }
 
-    short len;
-    is.read( reinterpret_cast< char* >( &len ), sizeof( short ) );
-    if ( is.gcount() != sizeof( short ) )
+    Int16 len;
+    is.read( reinterpret_cast< char* >( &len ), sizeof( Int16 ) );
+    if ( is.gcount() != sizeof( Int16 ) )
     {
         return false;
     }
@@ -194,8 +199,8 @@ ParserV3::parseMsgInfo( std::istream & is,
         {
             len = std::strlen( msg );
         }
-        std::string msgstr( msg, len );
-        result = handler.handleMsgInfo( board, msgstr );
+
+        result = handler.handleMsgInfo( board, std::string( msg, len ) );
     }
 
     delete [] msg;
@@ -249,6 +254,8 @@ ParserV3::parsePlayerType( std::istream & is,
                            Handler & handler ) const
 {
     player_type_t ptinfo;
+    std::memset( &ptinfo, 0, sizeof( player_type_t ) );
+
     is.read( reinterpret_cast< char* >( &ptinfo ),
              sizeof( player_type_t ) );
     if ( is.gcount() == sizeof( player_type_t ) )
@@ -268,6 +275,8 @@ ParserV3::parseServerParam( std::istream & is,
                             Handler & handler ) const
 {
     server_params_t sparams;
+    std::memset( &sparams, 0, sizeof( server_params_t ) );
+
     is.read( reinterpret_cast< char* >( &sparams ),
              sizeof( server_params_t ) );
     if ( is.gcount() == sizeof( server_params_t ) )
@@ -287,6 +296,8 @@ ParserV3::parsePlayerParam( std::istream & is,
                             Handler & handler ) const
 {
     player_params_t pparams;
+    std::memset( &pparams, 0, sizeof( player_params_t ) );
+
     is.read( reinterpret_cast< char* >( &pparams ),
              sizeof( pparams ) );
     if ( is.gcount() == sizeof( player_params_t ) )

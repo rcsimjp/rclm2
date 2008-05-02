@@ -6,9 +6,9 @@ list_items_in_dir() {
 	name=`basename $t`
 	case $name in
 	    '*')
-		    # 
+		    #
 		;;
-	    *)  
+	    *)
 		echo "    $name: $t"
 		;;
 	esac
@@ -18,7 +18,8 @@ list_items_in_dir() {
 ## echo message.
 ## _echo(message, ...)
 function _echo {
-    echo "rclm2: $*"
+#    echo "rclm2: $*"
+    echo "rclm2: echo"
 }
 
 
