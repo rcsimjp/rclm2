@@ -55,6 +55,15 @@ rclmtype_jopen2008_2D_SCRIPTS= \
 	types/jopen2008_2D/start \
 	types/jopen2008_2D/stop
 
+# rclm2 jopen2008_2D tournament type scripts
+rclmtype_jopen2008_2D_Tdir=$(pkgdatadir)/types/jopen2008_2D-T
+rclmtype_jopen2008_2D_T_SCRIPTS= \
+	types/jopen2008_2D-T/clearup \
+	types/jopen2008_2D-T/record \
+	types/jopen2008_2D-T/setup \
+	types/jopen2008_2D-T/start \
+	types/jopen2008_2D-T/stop
+
 
 # rclm2 roundrobin scheduler scripts
 rclmschedulers_roundrobindir=$(pkgdatadir)/schedulers/roundrobin

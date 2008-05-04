@@ -46,6 +46,7 @@ am__installdirs = "$(DESTDIR)$(pkgdatadir)" \
 	"$(DESTDIR)$(rclmschedulers_tournamentdir)" \
 	"$(DESTDIR)$(rclmtype_competitiondir)" \
 	"$(DESTDIR)$(rclmtype_jopen2008_2Ddir)" \
+	"$(DESTDIR)$(rclmtype_jopen2008_2D_Tdir)" \
 	"$(DESTDIR)$(rclmtype_robocup2007_2Ddir)" \
 	"$(DESTDIR)$(rclmtype_sampledir)" \
 	"$(DESTDIR)$(rclmtype_ssil2ddir)"
@@ -55,6 +56,7 @@ rclmschedulers_roundrobinSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 rclmschedulers_tournamentSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 rclmtype_competitionSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 rclmtype_jopen2008_2DSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+rclmtype_jopen2008_2D_TSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 rclmtype_robocup2007_2DSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 rclmtype_sampleSCRIPT_INSTALL = $(INSTALL_SCRIPT)
 rclmtype_ssil2dSCRIPT_INSTALL = $(INSTALL_SCRIPT)
@@ -63,6 +65,7 @@ SCRIPTS = $(pkgdata_SCRIPTS) $(rclm_script_SCRIPTS) \
 	$(rclmschedulers_tournament_SCRIPTS) \
 	$(rclmtype_competition_SCRIPTS) \
 	$(rclmtype_jopen2008_2D_SCRIPTS) \
+	$(rclmtype_jopen2008_2D_T_SCRIPTS) \
 	$(rclmtype_robocup2007_2D_SCRIPTS) $(rclmtype_sample_SCRIPTS) \
 	$(rclmtype_ssil2d_SCRIPTS)
 SOURCES =
@@ -218,6 +221,16 @@ rclmtype_jopen2008_2D_SCRIPTS = \
 	types/jopen2008_2D/setup \
 	types/jopen2008_2D/start \
 	types/jopen2008_2D/stop
+
+
+# rclm2 jopen2008_2D tournament type scripts
+rclmtype_jopen2008_2D_Tdir = $(pkgdatadir)/types/jopen2008_2D-T
+rclmtype_jopen2008_2D_T_SCRIPTS = \
+	types/jopen2008_2D-T/clearup \
+	types/jopen2008_2D-T/record \
+	types/jopen2008_2D-T/setup \
+	types/jopen2008_2D-T/start \
+	types/jopen2008_2D-T/stop
 
 
 # rclm2 roundrobin scheduler scripts
@@ -417,6 +430,25 @@ uninstall-rclmtype_jopen2008_2DSCRIPTS:
 	  echo " rm -f '$(DESTDIR)$(rclmtype_jopen2008_2Ddir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(rclmtype_jopen2008_2Ddir)/$$f"; \
 	done
+install-rclmtype_jopen2008_2D_TSCRIPTS: $(rclmtype_jopen2008_2D_T_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(rclmtype_jopen2008_2D_Tdir)" || $(MKDIR_P) "$(DESTDIR)$(rclmtype_jopen2008_2D_Tdir)"
+	@list='$(rclmtype_jopen2008_2D_T_SCRIPTS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f $$d$$p; then \
+	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	    echo " $(rclmtype_jopen2008_2D_TSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(rclmtype_jopen2008_2D_Tdir)/$$f'"; \
+	    $(rclmtype_jopen2008_2D_TSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(rclmtype_jopen2008_2D_Tdir)/$$f"; \
+	  else :; fi; \
+	done
+
+uninstall-rclmtype_jopen2008_2D_TSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(rclmtype_jopen2008_2D_T_SCRIPTS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	  echo " rm -f '$(DESTDIR)$(rclmtype_jopen2008_2D_Tdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(rclmtype_jopen2008_2D_Tdir)/$$f"; \
+	done
 install-rclmtype_robocup2007_2DSCRIPTS: $(rclmtype_robocup2007_2D_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(rclmtype_robocup2007_2Ddir)" || $(MKDIR_P) "$(DESTDIR)$(rclmtype_robocup2007_2Ddir)"
@@ -511,7 +543,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(SCRIPTS)
 installdirs:
-	for dir in "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(rclm_scriptdir)" "$(DESTDIR)$(rclmschedulers_roundrobindir)" "$(DESTDIR)$(rclmschedulers_tournamentdir)" "$(DESTDIR)$(rclmtype_competitiondir)" "$(DESTDIR)$(rclmtype_jopen2008_2Ddir)" "$(DESTDIR)$(rclmtype_robocup2007_2Ddir)" "$(DESTDIR)$(rclmtype_sampledir)" "$(DESTDIR)$(rclmtype_ssil2ddir)"; do \
+	for dir in "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(rclm_scriptdir)" "$(DESTDIR)$(rclmschedulers_roundrobindir)" "$(DESTDIR)$(rclmschedulers_tournamentdir)" "$(DESTDIR)$(rclmtype_competitiondir)" "$(DESTDIR)$(rclmtype_jopen2008_2Ddir)" "$(DESTDIR)$(rclmtype_jopen2008_2D_Tdir)" "$(DESTDIR)$(rclmtype_robocup2007_2Ddir)" "$(DESTDIR)$(rclmtype_sampledir)" "$(DESTDIR)$(rclmtype_ssil2ddir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -561,6 +593,7 @@ install-data-am: install-pkgdataSCRIPTS install-rclm_scriptSCRIPTS \
 	install-rclmschedulers_tournamentSCRIPTS \
 	install-rclmtype_competitionSCRIPTS \
 	install-rclmtype_jopen2008_2DSCRIPTS \
+	install-rclmtype_jopen2008_2D_TSCRIPTS \
 	install-rclmtype_robocup2007_2DSCRIPTS \
 	install-rclmtype_sampleSCRIPTS install-rclmtype_ssil2dSCRIPTS
 
@@ -601,6 +634,7 @@ uninstall-am: uninstall-pkgdataSCRIPTS uninstall-rclm_scriptSCRIPTS \
 	uninstall-rclmschedulers_tournamentSCRIPTS \
 	uninstall-rclmtype_competitionSCRIPTS \
 	uninstall-rclmtype_jopen2008_2DSCRIPTS \
+	uninstall-rclmtype_jopen2008_2D_TSCRIPTS \
 	uninstall-rclmtype_robocup2007_2DSCRIPTS \
 	uninstall-rclmtype_sampleSCRIPTS \
 	uninstall-rclmtype_ssil2dSCRIPTS
@@ -618,6 +652,7 @@ uninstall-am: uninstall-pkgdataSCRIPTS uninstall-rclm_scriptSCRIPTS \
 	install-rclmschedulers_tournamentSCRIPTS \
 	install-rclmtype_competitionSCRIPTS \
 	install-rclmtype_jopen2008_2DSCRIPTS \
+	install-rclmtype_jopen2008_2D_TSCRIPTS \
 	install-rclmtype_robocup2007_2DSCRIPTS \
 	install-rclmtype_sampleSCRIPTS install-rclmtype_ssil2dSCRIPTS \
 	install-strip installcheck installcheck-am installdirs \
@@ -628,6 +663,7 @@ uninstall-am: uninstall-pkgdataSCRIPTS uninstall-rclm_scriptSCRIPTS \
 	uninstall-rclmschedulers_tournamentSCRIPTS \
 	uninstall-rclmtype_competitionSCRIPTS \
 	uninstall-rclmtype_jopen2008_2DSCRIPTS \
+	uninstall-rclmtype_jopen2008_2D_TSCRIPTS \
 	uninstall-rclmtype_robocup2007_2DSCRIPTS \
 	uninstall-rclmtype_sampleSCRIPTS \
 	uninstall-rclmtype_ssil2dSCRIPTS
