@@ -1,3 +1,15 @@
+2008-05-05  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* share/rclm2/types/jopen2008_2D-T:
+	* share/rclm2/types/jopen2008_2D-T/clearup:
+	* share/rclm2/types/jopen2008_2D-T/record:
+	* share/rclm2/types/jopen2008_2D-T/setup:
+	* share/rclm2/types/jopen2008_2D-T/start:
+	* share/rclm2/types/jopen2008_2D-T/stop:
+	* share/rclm2/Makefile.am:
+	* share/rclm2/Makefile.in:
+	- added a new type jopen2008_2D-T for tournaments.
+
 2008-05-03  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* share/rclm2/types/jopen2008_2D/record:
