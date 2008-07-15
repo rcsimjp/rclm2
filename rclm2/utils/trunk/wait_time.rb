@@ -10,7 +10,7 @@ require 'time'
 begin
   require 'tk'
   withtk=true
-rescue LoadError 
+rescue LoadError
   withtk=false
 end
 
@@ -61,9 +61,18 @@ else
   # CUI mode.
   while $time > Time.now
     s = ($time - Time.now).to_i
-    if s < 60
+    if s < 10
       sleep 1
       puts("\a#{s} s.") # \a:bell
+    elsif s < 60
+      if s == 10
+        sleep 1
+      elsif 10 < s && s < 20
+        sleep (s - 10)
+      else
+        sleep 10
+      end
+      puts("The next game will be started after \a#{s} s.") # \a:bell
     elsif s < 120
       sleep (s - 60)
     else
@@ -72,6 +81,3 @@ else
     end
   end
 end
-
-
-
