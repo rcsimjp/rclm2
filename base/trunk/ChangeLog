@@ -1,3 +1,17 @@
+2008-07-15  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* NEWS:
+	* configure.ac:
+	- set version number 20080715.
+
+	* share/rclm2/types/robocup2008_2D:
+	* share/rclm2/types/robocup2008_2D/clearup:
+	* share/rclm2/types/robocup2008_2D/record:
+	* share/rclm2/types/robocup2008_2D/setup:
+	* share/rclm2/types/robocup2008_2D/start:
+	* share/rclm2/types/robocup2008_2D/stop:
+	- added a new type robocup2008_2D
+
 2008-05-05  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* share/rclm2/types/jopen2008_2D-T:
