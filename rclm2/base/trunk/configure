@@ -1746,6 +1746,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_config_headers="$ac_config_headers config.h"
 
 
+#AM_INIT_AUTOMAKE([gnu check-news])
 am__api_version='1.10'
 
 ac_aux_dir=
