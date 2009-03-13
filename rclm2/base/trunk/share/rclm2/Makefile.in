@@ -278,6 +278,11 @@ EXTRA_DIST = \
 	types/jopen2008_2D/setup \
 	types/jopen2008_2D/start \
 	types/jopen2008_2D/stop \
+	types/jopen2008_2D-T/clearup \
+	types/jopen2008_2D-T/record \
+	types/jopen2008_2D-T/setup \
+	types/jopen2008_2D-T/start \
+	types/jopen2008_2D-T/stop \
 	schedulers/roundrobin/init \
 	schedulers/roundrobin/update \
 	schedulers/tournament/init \

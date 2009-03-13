@@ -419,10 +419,10 @@ ResultPrinter::handleEOF()
          && M_playmode != rcsc::rcg::PM_TimeOver )
     {
         if ( M_cycle % M_half_time == 0 // just a half time
-             || ( M_cycle + 1 ) % M_half_time == 0
-             && ( ( M_cycle / M_half_time ) % 2 == 0 // even number halves
-                  || ( ( M_cycle + 1 ) / M_half_time ) % 2 == 0 )
-             && M_left_score == M_right_score ) // draw game
+             || ( ( M_cycle + 1 ) % M_half_time == 0
+                  && ( ( M_cycle / M_half_time ) % 2 == 0 // even number halves
+                       || ( ( M_cycle + 1 ) / M_half_time ) % 2 == 0 )
+                  && M_left_score == M_right_score ) ) // draw game
         {
 
         }

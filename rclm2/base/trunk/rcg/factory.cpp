@@ -39,6 +39,7 @@
 #include "parser_v2.h"
 #include "parser_v3.h"
 #include "parser_v4.h"
+#include "parser_v5.h"
 
 #include "types.h"
 
@@ -85,6 +86,10 @@ make_parser( std::istream & is )
     else if ( version == static_cast< int >( '0' ) + REC_VERSION_4 )
     {
         p = ParserPtr( new ParserV4 );
+    }
+    else if ( version == static_cast< int >( '0' ) + REC_VERSION_5 )
+    {
+        p = ParserPtr( new ParserV5 );
     }
 
     return p;
