@@ -52,6 +52,7 @@ public:
       \brief get supported rcg version
       \return version number
      */
+    virtual
     int version() const
       {
           return REC_VERSION_4;
@@ -64,6 +65,7 @@ public:
       \retval true, if successfuly parsed.
       \retval false, if incorrect format is detected.
     */
+    virtual
     bool parse( std::istream & is,
                 Handler & handler ) const;
 
@@ -82,7 +84,7 @@ public:
                     const std::string & line,
                     Handler & handler ) const;
 
-private:
+protected:
 
     /*!
       \brief parse SHOW_MODE inof, actually short_showinfo_t2
@@ -92,6 +94,7 @@ private:
       \retval true if successfully parsed.
       \retval false if failed to parse.
     */
+    virtual
     bool parseShow( const int n_line,
                     const std::string & line,
                     Handler & handler ) const;

@@ -1,3 +1,25 @@
+2009-03-10  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* NEWS:
+	* configure.ac:
+	- set version number 20080715.
+
+	* rcg/parser_v5.cpp:
+	* rcg/parser_v5.h:
+	* bin/Makefile.am:
+	* bin/Makefile.in:
+	* rcg/Makefile.am:
+	* rcg/factory.cpp:
+	* rcg/parser_v2.cpp:
+	* rcg/parser_v3.cpp:
+	* rcg/parser_v4.cpp:
+	* rcg/parser_v4.h:
+	* rcg/resultprinter.cpp:
+	* rcg/types.h:
+	* share/rclm2/Makefile.am:
+	* share/rclm2/Makefile.in:
+	- supported v5 rcg format.
+
 2008-07-15  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* NEWS:

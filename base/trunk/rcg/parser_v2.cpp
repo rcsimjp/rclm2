@@ -46,6 +46,7 @@
 #include "types.h"
 
 #include <iostream>
+#include <cstring>
 
 namespace rcsc {
 namespace rcg {

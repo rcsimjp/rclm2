@@ -20,6 +20,7 @@ librcg_a_SOURCES = \
 	parser_v2.cpp \
 	parser_v3.cpp \
 	parser_v4.cpp \
+	parser_v5.cpp \
 	util.cpp
 
 noinst_HEADERS = \
@@ -31,6 +32,7 @@ noinst_HEADERS = \
 	parser_v2.h \
 	parser_v3.h \
 	parser_v4.h \
+	parser_v5.h \
 	types.h \
 	util.h
 

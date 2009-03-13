@@ -32,7 +32,7 @@
 #ifndef RCSC_RCG_TYPES_H
 #define RCSC_RCG_TYPES_H
 
-#include "types.h"
+//#include <rcsc/types.h>
 
 #include <boost/cstdint.hpp>
 
@@ -41,13 +41,14 @@
 namespace rcsc {
 namespace rcg {
 
+
 //! max player number in one team
 const int MAX_PLAYER = 11;
 
 /*!
   \enum SideID
   \brief side type definition
- */
+*/
 enum SideID {
     LEFT = 1,
     NEUTRAL = 0,
@@ -728,6 +729,7 @@ struct PlayerT {
     float stamina_; //!< satamina value
     float effort_; //!< effort value
     float recovery_; //!< recovery value
+    float stamina_capacity_; //!< stamina capacity value
 
     UInt16 kick_count_; //!< kick command count
     UInt16 dash_count_; //!< dash command count
@@ -764,6 +766,7 @@ struct PlayerT {
         , stamina_( SHOWINFO_SCALE2F )
         , effort_( SHOWINFO_SCALE2F )
         , recovery_( SHOWINFO_SCALE2F )
+        , stamina_capacity_( -1.0f )
         , kick_count_( 0 )
         , dash_count_( 0 )
         , turn_count_( 0 )
@@ -843,6 +846,15 @@ struct PlayerT {
     bool hasStamina() const
       {
           return stamina_ != SHOWINFO_SCALE2F;
+      }
+
+    /*!
+      \brief check if this object has stamina capacity info
+      \return true if this object has stamina capacity info
+     */
+    bool hasStaminaCapacity() const
+      {
+          return stamina_capacity_ >= 0;
       }
 
     /*!
@@ -1054,8 +1066,11 @@ struct DispInfoT {
 //! recorded value of rcg v4
 const int REC_VERSION_4 = 4;
 
+//! recorded value of rcg v5
+const int REC_VERSION_5 = 5;
+
 //! default rcg version
-const int DEFAULT_LOG_VERSION = REC_VERSION_4;
+const int DEFAULT_LOG_VERSION = REC_VERSION_5;
 
 } // end namespace
 } // end namespace
