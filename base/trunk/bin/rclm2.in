@@ -28,7 +28,7 @@ how_to_start() {
     echo
     echo '	$ cd '${NAME}
     echo
-    echo '	# set league type (i.e. SSIL2D, 3D, 3D_standalone).'
+    echo '	# set league type (i.e. 2D_RoundRobin, 2D_Tournament, 3D, 3D_standalone).'
     echo '	$ ./script/init <LEAGUE_TYPE>'
     echo
     echo '	# make some settings .'
