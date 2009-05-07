@@ -32,7 +32,7 @@ SERVOPT="${SERVOPT} server::game_log_compression = 0"
 SERVOPT="${SERVOPT} server::text_log_compression = 0"
 SERVOPT="${SERVOPT} server::kick_off_wait = 200"
 SERVOPT="${SERVOPT} server::connect_wait = 6000"
-#SERVOPT="${SERVOPT} server::pen_taken_wait = 50"
+SERVOPT="${SERVOPT} server::max_monitors = 1"
 
 [ -e ${HOME}/.rclm2D ] && .  ${HOME}/.rclm2D
 

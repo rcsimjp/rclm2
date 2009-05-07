@@ -1,3 +1,9 @@
+2009-05-08  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* share/rclm2/types/2D_RoundRobin/start:
+	* share/rclm2/types/2D_Tournament/start:
+	- added "server::max_monitors = 1"
+
 2009-05-07  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* INSTALL:
