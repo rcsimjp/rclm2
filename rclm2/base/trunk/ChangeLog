@@ -1,3 +1,27 @@
+2009-05-07  Hidehisa Akiyama  <akky@users.sourceforge.jp>
+
+	* INSTALL:
+	* Makefile.in:
+	* aclocal.m4:
+	* bin/Makefile.in:
+	* bin/rclm2.in:
+	* configure:
+	* share/rclm2/Makefile.am:
+	* share/rclm2/Makefile.in:
+	* share/rclm2/types/2D_RoundRobin:
+	* share/rclm2/types/2D_RoundRobin/clearup:
+	* share/rclm2/types/2D_RoundRobin/record:
+	* share/rclm2/types/2D_RoundRobin/setup:
+	* share/rclm2/types/2D_RoundRobin/start:
+	* share/rclm2/types/2D_RoundRobin/stop:
+	* share/rclm2/types/2D_Tournament:
+	* share/rclm2/types/2D_Tournament/clearup:
+	* share/rclm2/types/2D_Tournament/record:
+	* share/rclm2/types/2D_Tournament/setup:
+	* share/rclm2/types/2D_Tournament/start:
+	* share/rclm2/types/2D_Tournament/stop:
+	- added new types.
+
 2009-03-10  Hidehisa Akiyama  <akky@users.sourceforge.jp>
 
 	* NEWS:

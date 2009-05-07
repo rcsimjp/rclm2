@@ -1,0 +1,106 @@
+#! /bin/bash
+
+## global Variables
+WORKDIR="."
+
+## ----------------------------------------------------------
+## get team names
+TEAM_L=$1
+TEAM_R=$2
+
+
+## ----------------------------------------------------------
+## rcssserver command line options
+
+SERVOPT=""
+SERVOPT="${SERVOPT} server::nr_normal_halfs = 2"
+SERVOPT="${SERVOPT} server::nr_extra_halfs = 2"
+SERVOPT="${SERVOPT} server::penalty_shoot_outs = true"
+SERVOPT="${SERVOPT} server::auto_mode = true"
+SERVOPT="${SERVOPT} server::half_time = 300"
+SERVOPT="${SERVOPT} server::extra_half_time = 100"
+#SERVOPT="${SERVOPT} server::half_time = 1"
+SERVOPT="${SERVOPT} server::game_logging = true"
+SERVOPT="${SERVOPT} server::text_logging = true"
+SERVOPT="${SERVOPT} server::game_log_dated = true"
+SERVOPT="${SERVOPT} server::text_log_dated = true"
+SERVOPT="${SERVOPT} server::game_log_fixed = false"
+SERVOPT="${SERVOPT} server::text_log_fixed = false"
+SERVOPT="${SERVOPT} server::game_log_dir = ${WORKDIR}"
+SERVOPT="${SERVOPT} server::text_log_dir = ${WORKDIR}"
+SERVOPT="${SERVOPT} server::game_log_compression = 0"
+SERVOPT="${SERVOPT} server::text_log_compression = 0"
+SERVOPT="${SERVOPT} server::kick_off_wait = 200"
+SERVOPT="${SERVOPT} server::connect_wait = 6000"
+#SERVOPT="${SERVOPT} server::pen_taken_wait = 50"
+
+[ -e ${HOME}/.rclm2D ] && .  ${HOME}/.rclm2D
+
+
+## ----------------------------------------------------------
+## rcssmonitor command line options
+
+MONOPT=""
+# !!! Do NOT edit next line !!!
+MONOPT="${MONOPT} -auto_quit_mode 1 -auto_quit_wait 15"
+## score board font, see /usr/X11R6/lib/X11/fonts/misc/
+##                      or /usr/X11R6/share/fonts/misc/
+MONOPT="${MONOPT} -font_name 12x24"
+#MONOPT="${MONOPT} -window_size_x 1014 -window_size_y 730"
+MONOPT="${MONOPT} -window_size_x 1274 -window_size_y 1024"
+
+## Wait few seconds with echo message.
+## _countdown(second=10, message="")
+function _countdown {
+    local count=$1
+    local message=$2
+
+    count=${count:=10}
+    while [ $count != 0 ]; do
+        count=$(($count - 1))
+        printf "rclm2: %3d %s\r" $count "$message"
+        sleep 1
+    done
+    echo
+}
+
+## echo message and exit 1.
+## _die(message, ...)
+function _die {
+    echo "Error: $*"
+    echo
+    exit 1
+}
+
+# -----------------------------------------------------------
+# ready for match
+
+echo "start Match \"${TEAM_L}\" vs \"${TEAM_R}\"..."
+#--------------------------------------------------
+# log file settings
+
+LOGDATE=`date "+%Y%m%d%H%M"`
+LOGNAME="${LOGDATE}-${TEAM_L}-vs-${TEAM_R}.log"
+
+#--------------------------------------------------------------
+# Starting rcssserver & rcssmonitor
+rcssserver $SERVOPT \
+    1> ${WORKDIR}/${LOGNAME} 2>&1 &
+PID=$!
+#echo $PID
+sleep 2
+# start monitor with auto quit mode
+rcssmonitor $MONOPT 1> /dev/null 2>&1
+
+# wait server end
+_countdown 5 "Waiting for server end."
+
+#rm ${START_R}
+#rm ${START_L}
+
+echo "Killing rcssserver"
+kill -s INT $PID
+
+#[ $? -ne 0 ] && _die "... failed."
+#echo "rclm: ...done."
+#_run_match ${TEAM_1_DIR} ${TEAM_2_DIR}

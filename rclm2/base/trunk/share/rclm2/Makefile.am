@@ -64,6 +64,21 @@ rclmtype_jopen2008_2D_T_SCRIPTS= \
 	types/jopen2008_2D-T/start \
 	types/jopen2008_2D-T/stop
 
+rclmtype_2D_RoundRobindir=$(pkgdatadir)/types/2D_RoundRobin
+rclmtype_2D_RoundRobin_SCRIPTS= \
+	types/2D_RoundRobin/clearup \
+	types/2D_RoundRobin/record \
+	types/2D_RoundRobin/setup \
+	types/2D_RoundRobin/start \
+	types/2D_RoundRobin/stop
+
+rclmtype_2D_Tournamentdir=$(pkgdatadir)/types/2D_Tournament
+rclmtype_2D_Tournament_SCRIPTS= \
+	types/2D_Tournament/clearup \
+	types/2D_Tournament/record \
+	types/2D_Tournament/setup \
+	types/2D_Tournament/start \
+	types/2D_Tournament/stop
 
 # rclm2 roundrobin scheduler scripts
 rclmschedulers_roundrobindir=$(pkgdatadir)/schedulers/roundrobin
@@ -114,6 +129,16 @@ EXTRA_DIST = \
 	types/jopen2008_2D-T/setup \
 	types/jopen2008_2D-T/start \
 	types/jopen2008_2D-T/stop \
+	types/2D_RoundRobin/clearup \
+	types/2D_RoundRobin/record \
+	types/2D_RoundRobin/setup \
+	types/2D_RoundRobin/start \
+	types/2D_RoundRobin/stop \
+	types/2D_Tournament/clearup \
+	types/2D_Tournament/record \
+	types/2D_Tournament/setup \
+	types/2D_Tournament/start \
+	types/2D_Tournament/stop \
 	schedulers/roundrobin/init \
 	schedulers/roundrobin/update \
 	schedulers/tournament/init \

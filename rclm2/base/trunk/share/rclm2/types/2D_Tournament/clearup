@@ -1,0 +1,10 @@
+#! /bin/bash
+echo $0
+
+## echo message and exit 1.
+## _die(message, ...)
+function _die {
+    echo "Error: $*"
+    echo
+    exit 1
+}
