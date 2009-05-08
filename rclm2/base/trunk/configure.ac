@@ -20,6 +20,13 @@ AX_BOOST_BASE([1.32.0])
 CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
 LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
 
+libz="yes"
+AC_CHECK_LIB([z], [deflate],
+             [AC_DEFINE([HAVE_LIBZ], [1],
+                        [Define to 1 if you have the `z' library (-lz).])
+              LIBS="-lz $LIBS"],
+             [libz="no"])
+
 # Checks for header files.
 AC_CHECK_HEADERS([netinet/in.h])
 
