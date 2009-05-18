@@ -80,6 +80,15 @@ rclmtype_2D_Tournament_SCRIPTS= \
 	types/2D_Tournament/start \
 	types/2D_Tournament/stop
 
+rclmtype_3DSparkdir=$(pkgdatadir)/types/3DSpark
+rclmtype_3DSpark_SCRIPTS= \
+	types/3DSpark/local_func.bash \
+	types/3DSpark/clearup \
+	types/3DSpark/record \
+	types/3DSpark/setup \
+	types/3DSpark/start \
+	types/3DSpark/stop
+
 # rclm2 roundrobin scheduler scripts
 rclmschedulers_roundrobindir=$(pkgdatadir)/schedulers/roundrobin
 rclmschedulers_roundrobin_SCRIPTS= \
@@ -139,6 +148,12 @@ EXTRA_DIST = \
 	types/2D_Tournament/setup \
 	types/2D_Tournament/start \
 	types/2D_Tournament/stop \
+	types/3DSpark/local_func.bash \
+	types/3DSpark/clearup \
+	types/3DSpark/record \
+	types/3DSpark/setup \
+	types/3DSpark/start \
+	types/3DSpark/stop \
 	schedulers/roundrobin/init \
 	schedulers/roundrobin/update \
 	schedulers/tournament/init \
