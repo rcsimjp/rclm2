@@ -1,0 +1,5 @@
+#! /bin/bash
+echo $0
+. `dirname $0`/local_func.bash
+
+__before_match $1 $2
