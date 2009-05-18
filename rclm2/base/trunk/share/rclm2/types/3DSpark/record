@@ -2,13 +2,5 @@
 echo $0
 . `dirname $0`/local_func.bash
 
-echo $SERVER
-
-
-echo $#
-while [ $# -gt 0 ]; do
-    echo $1
-    shift
-done
-echo
-sleep 1
+# __after_match move to start script.
+# do anything.

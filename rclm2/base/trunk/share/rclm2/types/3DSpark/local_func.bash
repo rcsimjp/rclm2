@@ -18,7 +18,7 @@ HALF_TIME=$((TOTAL_GAME_TIME/2))
 
 # load user setting.
 #[ -f ${RCLM_USER_DIR}/3DSpark ] &&  source ${RCLM_USER_DIR}/3DSpark ]
-test  -f ./var/3DSpark ] &&  source ./var/3DSpark
+test  -f ./var/3DSpark && source ./var/3DSpark
 
 function _countdown {
     countdown $1 $2
