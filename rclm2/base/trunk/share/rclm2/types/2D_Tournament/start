@@ -42,12 +42,8 @@ SERVOPT="${SERVOPT} server::max_monitors = 1"
 
 MONOPT=""
 # !!! Do NOT edit next line !!!
-MONOPT="${MONOPT} -auto_quit_mode 1 -auto_quit_wait 15"
-## score board font, see /usr/X11R6/lib/X11/fonts/misc/
-##                      or /usr/X11R6/share/fonts/misc/
-MONOPT="${MONOPT} -font_name 12x24"
-#MONOPT="${MONOPT} -window_size_x 1014 -window_size_y 730"
-MONOPT="${MONOPT} -window_size_x 1274 -window_size_y 1024"
+MONOPT="${MONOPT} --auto-quit-mode on --auto-quit-wait 15"
+MONOPT="${MONOPT} --show-menu-bar off --full-screen"
 
 ## Wait few seconds with echo message.
 ## _countdown(second=10, message="")
