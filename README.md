@@ -1,0 +1,242 @@
+# rclm2
+
+
+  * Install
+  * Usage
+  * Format of team list file
+  * Format of schedule file
+  * Example: SSIL settings
+  * Sample Scripts for Teams
+
+* Install
+
+  $ tar xzvf rclm2-x.x.x.tar.gz
+  $ cd rclm2-x.x.x
+  $ ./configure [--prefix=<RCLMDIR>]
+  $ make
+  [ $ su ]
+  $ make install
+
+The main command 'rclm2' is installed into 'RCLMDIR/bin'. Several sub
+script files are also installed into 'RCLMDIR/share/rclm2'
+
+
+* Usage
+
+  + Create round directory
+
+   The sub script files are copied (or sym-linked) in ROUND directory
+   (The default setting is 'sym-link').
+
+     $ rclm2 [ -c | -s ] <ROUND>
+
+  + Change directory to ROUND
+
+     $ cd <ROUND>
+
+  + Set league type
+
+     $ ./script/init { SSIL2D | competition | robocup2007_2D  }
+
+  + (Optional) Set scheduler type
+
+  If you do not set the scheduler type, the roundrobin scheduler is
+  used by default.
+
+     $ ./script/init_scheduler [ roundrobin | tournament ]
+
+  + Create schedule file
+
+  TEAMS is the team listed file, and './var/schedule' is the match
+  listed file. The detailed format  is described in the following
+  sections.
+
+     $ ./script/schedule/init <TEAMS>
+     (or, directly create/edit './var/schedule'.)
+
+  + Start games
+
+  It is strongly recommended to check the schedule file before you
+  start the round. And you will need to change some configuration
+  parameters before starting the game. See next section.
+
+     $ cat ./var/schedule
+     $ ./script/start
+
+
+* Configuration for the Environment
+
+Several configuration parameters (server parameters, machine name etc)
+are written in the script file, './script/game/start'. You can directly edit
+this file if you copied the sub script files under the round directory.
+Or, you can use the special canfiguration file, '~/.rclm2D', to set
+server parameters. Available parameters are depend on the
+'./script/game/start' that you are using. Please read that file before
+you try another settings.
+
+
+Example: ~/.rclm2D
+
+ MACHINES_L="machine1 machine2 machine3"
+ MACHINES_R="machine4 machine5 machine6"
+ SERVERHOST=localhost
+ ACCOUNT=robocup
+
+
+* File Format
+** Team List File
+
+Each line contains only one team.
+PATH_TO_TEAM? is the team directory where their start or kill
+scripts exist. This value is usually the home directory of each team.
+'''NOTE''': PATH_TO_TEAM? must not contain the white space characters.
+
+ <PATH_TO_TEAM1>
+ <PATH_TO_TEAM2>
+ <PATH_TO_TEAM3>
+ ...
+
+Example:
+ /home/aaa
+ /home/bbb
+ /home/ccc
+ /home/ddd
+
+
+** Schedule File
+
+Each line contains only one match.
+PATH_TO_TEAM? must be same as the string value listed in the team list
+file.
+ <PATH_TO_TEAM1> vs <PATH_TO_TEAM2>
+ <PATH_TO_TEAM2> vs <PATH_TO_TEAM3>
+ ...
+
+
+Example:
+ /home/aaa vs /home/bbb
+ /home/bbb vs /home/ccc
+ /home/ccc vs /home/ddd
+ /home/aaa vs /home/ddd
+ /home/aaa vs /home/ccc
+ /home/bbb vs /home/ddd
+
+
+* Example: SSIL Settings
+
+At first, you must prepare the team listed file, called 'teams.all'.
+
+    $ rclm2 SSIL
+    $ cd SSIL
+    $ ./script/init SSIL2D
+    $ ./script/schedule/init teams.all
+    $ cat ./var/schedule
+    $ ./script/start
+
+
+
+====
+
+* Sample Scripts for Teams
+
+Teams have to put the special scripts, called start and kill,  under
+their directory (usually home directory).
+Here, we assume that each team can use 4 machines.
+The number of start? and kill? should be changed according to the
+total number of competition machines.
+
+ - start
+ This script handle 3 command line options.
+ 1: absolute path team directory
+ This is the top level start script. Usually, there should be no need
+ to change it for the team (Sleep time might need to be changed). It
+ will be called by the Soccer Server with six command line parameters:
+
+ start <YOUR HOME DIR> <SERVER MACHINE> <MACHINE1> <MACHINE2> <MACHINE3> <MACHINE4>
+
+ - start[1-4]
+ The followings are sample scripts starting a team on 4
+ machines. Please use absolute file names and make them group
+ executable. Please also remember that your team is started by a
+ different user, so don't use variables like $HOME, or ~/ in your
+ pathes.
+
+ --start1
+  #!/bin/sh
+
+  host=$1
+  player=/home/aaa/bin/aaa_player
+
+  ${player} --host ${host} --goalie &
+  sleep 3
+  ${player} --host ${host} &
+  ${player} --host ${host} &
+
+ --start2
+  #!/bin/sh
+
+  host=$1
+  player=/home/aaa/bin/aaa_player
+
+  ${player} --host ${host} &
+  ${player} --host ${host} &
+  ${player} --host ${host} &
+
+ --start3
+  #!/bin/sh
+
+  host=$1
+  player=/home/aaa/bin/aaa_player
+
+  ${player} --host ${host} &
+  ${player} --host ${host} &
+  ${player} --host ${host} &
+
+ --start4
+  #!/bin/sh
+
+  host=$1
+  player=/home/aaa/bin/aaa_player
+  coach=/home/aaa/bin/aaa_coach
+
+  ${player} --host ${host} &
+  ${player} --host ${host} &
+  sleep 2
+  ${coach} --host ${host} &
+
+ - kill[1-4]
+ These are sample kill scripts to terminate all client
+ programs. Please make them group executable and  double check that
+ they kill all of your programs.
+
+ -- kill1
+  #!/bin/sh
+  player=aaa_player
+
+  killall ${player}
+  killall -KILL ${player}
+
+
+ --kill2
+  #!/bin/sh
+  player=aaa_player
+
+  killall ${player}
+  killall -KILL ${player}
+
+ --kill3
+  #! /bin/sh
+  player=aaa_player
+
+  killall ${player}
+  killall -KILL ${player}
+
+ --kill4
+  #!/bin/sh
+  player=aaa_player
+  coach=aaa_coach
+
+  killall ${player}
+  killall ${coach}
+  killall -KILL ${player}
+  killall -KILL ${coach}
